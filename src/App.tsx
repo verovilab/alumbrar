@@ -16,27 +16,46 @@ import { Auth } from './components/Auth';
 // Hooks & Data
 import { GEMAS } from './data/gemas';
 import { useGemini } from './hooks/useGemini';
+import { getUserSubscription, getMessageCount } from './lib/subscriptions';
+import { Pricing } from './components/Pricing';
 
 export default function App() {
   const [session, setSession] = useState<any>(null);
+  const [isPremium, setIsPremium] = useState(false);
+  const [msgCount, setMsgCount] = useState(0);
+  const [showPricing, setShowPricing] = useState(false);
+  
   const [activeTab, setActiveTab] = useState<'home' | 'gems' | 'qa' | 'lessons'>('home');
   const [input, setInput] = useState('');
   const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
   const [lessonContent, setLessonContent] = useState<string | null>(null);
   const [isLoadingLesson, setIsLoadingLesson] = useState(false);
 
-  // Auth Listener
+  // Auth & Subscription Listener
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      if (session) {
+        checkSubscription(session.user.id);
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      if (session) {
+        checkSubscription(session.user.id);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const checkSubscription = async (userId: string) => {
+    const sub = await getUserSubscription(userId);
+    setIsPremium(sub.isPremium);
+    const count = await getMessageCount(userId);
+    setMsgCount(count);
+  };
 
   // Gemini Hook
   const { messages, setMessages, isTyping, sendMessage } = useGemini(process.env.API_KEY || "", session?.user?.id);
@@ -57,10 +76,17 @@ export default function App() {
 
   const handleSendMessage = async () => {
     if (!input.trim()) return;
+    
+    if (!isPremium && msgCount >= 5) {
+      setShowPricing(true);
+      return;
+    }
+
     const text = input.trim();
     setInput('');
     setActiveTab('qa');
     await sendMessage(text, messages);
+    setMsgCount(prev => prev + 1);
   };
 
   const loadLesson = async (num: number) => {
@@ -166,6 +192,12 @@ export default function App() {
           <NavBtn active={activeTab === 'lessons'} onClick={() => setActiveTab('lessons')} icon={<BookOpen size={20}/>} label="Curso" />
         </nav>
 
+        {showPricing && (
+          <Pricing 
+            userId={session.user.id} 
+            onClose={() => setShowPricing(false)} 
+          />
+        )}
       </div>
     </div>
   );

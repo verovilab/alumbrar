@@ -38,10 +38,21 @@ create table public.chat_messages (
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
+-- TABLA DE SUSCRIPCIONES
+create table public.subscriptions (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users not null unique,
+  status text not null check (status in ('active', 'canceled', 'incomplete')),
+  plan_id text not null,
+  current_period_end timestamp with time zone,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
 -- Habilitar Row Level Security (RLS)
 alter table public.user_favorites enable row level security;
 alter table public.chat_sessions enable row level security;
 alter table public.chat_messages enable row level security;
+alter table public.subscriptions enable row level security;
 
 -- Políticas de Seguridad (Solo el dueño puede ver/editar sus datos)
 create policy "Users can view their own favorites" on public.user_favorites
@@ -52,4 +63,7 @@ create policy "Users can insert their own favorites" on public.user_favorites
 
 create policy "Users can delete their own favorites" on public.user_favorites
   for delete using (auth.uid() = user_id);
+
+create policy "Users can view their own subscription" on public.subscriptions
+  for select using (auth.uid() = user_id);
 ```
