@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Home, Star, BookOpen, MessageCircle, RefreshCw, LogOut
 } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { supabase } from './lib/supabase';
 
 // Components
@@ -18,9 +18,10 @@ import { GEMAS } from './data/gemas';
 import { useGemini } from './hooks/useGemini';
 import { getUserSubscription, getMessageCount } from './lib/subscriptions';
 import { Pricing } from './components/Pricing';
+import { Session } from '@supabase/supabase-js';
 
 export default function App() {
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isPremium, setIsPremium] = useState(false);
   const [msgCount, setMsgCount] = useState(0);
   const [showPricing, setShowPricing] = useState(false);
@@ -33,17 +34,17 @@ export default function App() {
 
   // Auth & Subscription Listener
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session) {
-        checkSubscription(session.user.id);
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      if (currentSession) {
+        checkSubscription(currentSession.user.id);
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session) {
-        checkSubscription(session.user.id);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, currentSession) => {
+      setSession(currentSession);
+      if (currentSession) {
+        checkSubscription(currentSession.user.id);
       }
     });
 
@@ -58,7 +59,8 @@ export default function App() {
   };
 
   // Gemini Hook
-  const { messages, setMessages, isTyping, sendMessage } = useGemini(process.env.API_KEY || "", session?.user?.id);
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
+  const { messages, setMessages, isTyping, sendMessage } = useGemini(apiKey, session?.user?.id);
 
   const dayOfYear = useMemo(() => {
     const now = new Date();
@@ -86,7 +88,7 @@ export default function App() {
     setInput('');
     setActiveTab('qa');
     await sendMessage(text, messages);
-    setMsgCount(prev => prev + 1);
+    setMsgCount((prev: number) => prev + 1);
   };
 
   const loadLesson = async (num: number) => {
@@ -95,8 +97,8 @@ export default function App() {
     setIsLoadingLesson(true);
     setActiveTab('lessons');
     try {
-      const ai = new GoogleGenAI(process.env.API_KEY || "");
-      const model = ai.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
       const prompt = `Actúa como un maestro experto en Un Curso de Milagros. Pero no hables como si fueras un guia sino sólo trasnmite información. Proporciona un resumen inspirador y profundo de la Lección ${num}. Estructúralo con: 1. El concepto central. 2. Una explicación para la vida diaria. 3. Una práctica concreta para hoy.`;
       
       const result = await model.generateContent(prompt);

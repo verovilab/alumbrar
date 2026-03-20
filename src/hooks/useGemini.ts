@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { supabase } from '../lib/supabase';
 
 export interface Message {
@@ -24,6 +24,8 @@ export function useGemini(apiKey: string, userId?: string) {
   }, [userId]);
 
   const loadHistory = async () => {
+    if (!userId) return;
+
     // 1. Get or create a chat session for today
     const { data: session } = await supabase
       .from('chat_sessions')
@@ -54,7 +56,7 @@ export function useGemini(apiKey: string, userId?: string) {
         .order('created_at', { ascending: true });
 
       if (msgs) {
-        setMessages(msgs.map(m => ({
+        setMessages(msgs.map((m: any) => ({
           role: m.role as 'user' | 'model',
           text: m.content,
           timestamp: new Date(m.created_at).getTime()
@@ -78,10 +80,10 @@ export function useGemini(apiKey: string, userId?: string) {
     });
 
     try {
-      const ai = new GoogleGenAI(apiKey);
-      const model = ai.getGenerativeModel({ 
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ 
         model: 'gemini-1.5-flash',
-        systemInstruction: "Eres 'El Guía' de Camino a UCDM. Tu tono es profesional, poético y profundo, pero no hables como si fueras un guia sino sólo trasnmite información. Responde siempre basándote en Un Curso de Milagros. Ayuda al usuario a perdonar y encontrar paz."
+        systemInstruction: "Eres 'El Guía' de Camino a UCDM. Tu tono es profesional, poético y profundo. Responde siempre basándote en Un Curso de Milagros. Ayuda al usuario a perdonar y encontrar paz."
       });
 
       const result = await model.generateContent({
