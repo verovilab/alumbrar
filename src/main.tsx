@@ -8,11 +8,11 @@ if (rootElement) {
   createRoot(rootElement).render(<App />);
 }
 
-// Registro de Service Worker para PWA
+// Nuclear Option: Unregister service worker to fix cache loops
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(err => {
-      console.log('SW registration failed: ', err);
-    });
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    for (let registration of registrations) {
+      registration.unregister();
+    }
   });
 }
