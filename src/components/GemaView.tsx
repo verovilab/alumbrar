@@ -1,13 +1,63 @@
-import React from 'react';
-import { Star, Repeat, Quote, Zap } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Star, Repeat, Quote, Zap, Heart } from 'lucide-react';
 import { Gema } from '../data/gemas';
+import { supabase } from '../lib/supabase';
 
 interface GemaViewProps {
   currentGema: Gema;
   onNextGema: () => void;
+  userId?: string;
 }
 
-export function GemaView({ currentGema, onNextGema }: GemaViewProps) {
+export function GemaView({ currentGema, onNextGema, userId }: GemaViewProps) {
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (userId) {
+      checkIfFavorite();
+    }
+  }, [currentGema, userId]);
+
+  const checkIfFavorite = async () => {
+    const { data } = await supabase
+      .from('user_favorites')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('gema_id', currentGema.id)
+      .single();
+    
+    setIsFavorite(!!data);
+  };
+
+  const toggleFavorite = async () => {
+    if (!userId || loading) return;
+    setLoading(true);
+
+    try {
+      if (isFavorite) {
+        await supabase
+          .from('user_favorites')
+          .delete()
+          .eq('user_id', userId)
+          .eq('gema_id', currentGema.id);
+        setIsFavorite(false);
+      } else {
+        await supabase
+          .from('user_favorites')
+          .insert({
+            user_id: userId,
+            gema_id: currentGema.id
+          });
+        setIsFavorite(true);
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6 animate-fade-up">
       <div className="flex items-center justify-between">
@@ -17,9 +67,18 @@ export function GemaView({ currentGema, onNextGema }: GemaViewProps) {
           </div>
           <h3 className="text-lg font-serif font-bold text-stone-900">{currentGema.category}</h3>
         </div>
-        <button onClick={onNextGema} className="p-3 bg-stone-50 rounded-full text-stone-400 hover:text-stone-900 transition-colors">
-          <Repeat size={18} />
-        </button>
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={toggleFavorite}
+            disabled={loading}
+            className={`p-3 rounded-full transition-all ${isFavorite ? 'bg-red-50 text-red-500' : 'bg-stone-50 text-stone-300 hover:text-red-400'}`}
+          >
+            <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
+          </button>
+          <button onClick={onNextGema} className="p-3 bg-stone-50 rounded-full text-stone-400 hover:text-stone-900 transition-colors">
+            <Repeat size={18} />
+          </button>
+        </div>
       </div>
 
       <div className="bg-white p-10 rounded-[3rem] border border-stone-100 shadow-xl space-y-8 relative group">

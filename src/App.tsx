@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
-  Home, Star, BookOpen, MessageCircle, RefreshCw
+  Home, Star, BookOpen, MessageCircle, RefreshCw, LogOut
 } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
+import { supabase } from './lib/supabase';
 
 // Components
 import { NavBtn } from './components/NavBtn';
@@ -10,20 +11,35 @@ import { HomeView } from './components/HomeView';
 import { GemaView } from './components/GemaView';
 import { ChatView } from './components/ChatView';
 import { LessonsView } from './components/LessonsView';
+import { Auth } from './components/Auth';
 
 // Hooks & Data
 import { GEMAS } from './data/gemas';
 import { useGemini } from './hooks/useGemini';
 
 export default function App() {
+  const [session, setSession] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'home' | 'gems' | 'qa' | 'lessons'>('home');
   const [input, setInput] = useState('');
   const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
   const [lessonContent, setLessonContent] = useState<string | null>(null);
   const [isLoadingLesson, setIsLoadingLesson] = useState(false);
 
+  // Auth Listener
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   // Gemini Hook
-  const { messages, setMessages, isTyping, sendMessage } = useGemini(process.env.API_KEY || "");
+  const { messages, setMessages, isTyping, sendMessage } = useGemini(process.env.API_KEY || "", session?.user?.id);
 
   const dayOfYear = useMemo(() => {
     const now = new Date();
@@ -69,6 +85,10 @@ export default function App() {
 
   const categories = ["Calma", "Perdón", "Percepción", "Confianza", "Relaciones", "Presencia"];
 
+  if (!session) {
+    return <Auth />;
+  }
+
   return (
     <div className="min-h-screen bg-[#FDFCFB] flex justify-center font-sans antialiased selection:bg-[#D4AF37]/20">
       <div className="w-full max-w-lg min-h-screen bg-white shadow-2xl flex flex-col relative border-x border-stone-100 overflow-hidden">
@@ -79,12 +99,22 @@ export default function App() {
             <h1 className="text-2xl font-serif font-bold text-stone-900 tracking-tight">Camino a UCDM</h1>
             <p className="text-[9px] uppercase tracking-[0.4em] text-stone-400 font-bold">Luz & Verdad</p>
           </div>
-          <button 
-            onClick={() => window.confirm("¿Reiniciar sesión?") && setMessages([])}
-            className="p-3 bg-stone-50 text-stone-300 rounded-full hover:text-stone-900 transition-colors"
-          >
-            <RefreshCw size={18} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => window.confirm("¿Reiniciar chat?") && setMessages([])}
+              className="p-3 bg-stone-50 text-stone-300 rounded-full hover:text-stone-900 transition-colors"
+              title="Reiniciar chat"
+            >
+              <RefreshCw size={18} />
+            </button>
+            <button 
+              onClick={() => supabase.auth.signOut()}
+              className="p-3 bg-stone-50 text-stone-300 rounded-full hover:text-red-600 transition-colors"
+              title="Cerrar sesión"
+            >
+              <LogOut size={18} />
+            </button>
+          </div>
         </header>
 
         {/* Contenido */}
@@ -102,6 +132,7 @@ export default function App() {
             <GemaView 
               currentGema={currentGema} 
               onNextGema={handleNextGema} 
+              userId={session?.user?.id}
             />
           )}
 
