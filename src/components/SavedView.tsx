@@ -156,6 +156,7 @@ export function SavedView({ userId }: SavedViewProps) {
                     </button>
                   </div>
                   <p className="font-serif italic text-stone-800 mb-2">"{fav.displayData?.phrase}"</p>
+                  <p className="text-[9px] text-stone-400 font-bold uppercase tracking-widest text-right">— {fav.displayData?.author || "Un Curso de Milagros"}</p>
                 </div>
               ))
             ) : (

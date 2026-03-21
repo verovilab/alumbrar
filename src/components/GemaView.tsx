@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Repeat, Quote, Zap, Heart, Share2 } from 'lucide-react';
+import { Repeat, Quote, Zap, Heart, Share2, Timer, CheckCircle, Bell } from 'lucide-react';
 import { GemaIcon } from './GemaIcon';
 import { Gema } from '../data/gemas';
 import { supabase } from '../lib/supabase';
@@ -14,12 +14,41 @@ interface GemaViewProps {
 export function GemaView({ currentGema, onNextGema, userId, categories }: GemaViewProps) {
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isFading, setIsFading] = useState(false);
+  
+  // Timer States
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [duration, setDuration] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [showDone, setShowDone] = useState(false);
 
   useEffect(() => {
     if (userId) {
       checkIfFavorite();
     }
-  }, [currentGema, userId]);
+    // Si cambia la gema, resetear temporizador
+    setIsTimerRunning(false);
+    setTimeLeft(duration);
+    setShowDone(false);
+  }, [currentGema, userId, duration]);
+
+  // Timer Logic
+  useEffect(() => {
+    let interval: any;
+    if (isTimerRunning && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && isTimerRunning) {
+      setIsTimerRunning(false);
+      setShowDone(true);
+      // Bell Sound / Visual FeedBack
+      const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
+      audio.volume = 0.3;
+      audio.play().catch(() => {});
+    }
+    return () => clearInterval(interval);
+  }, [isTimerRunning, timeLeft]);
 
   const checkIfFavorite = async () => {
     const { data } = await supabase
@@ -74,14 +103,22 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
     }
   };
 
+  const handleNextWithFade = (category?: string) => {
+    setIsFading(true);
+    setTimeout(() => {
+      onNextGema(category);
+      setIsFading(false);
+    }, 400); // Duración de la animación (.animate-fade-out)
+  };
+
   return (
-    <div className="space-y-6 animate-fade-up">
+    <div className={`space-y-6 transition-all duration-400 ${isFading ? 'animate-fade-out' : 'animate-fade-in'}`}>
       {/* Selector de Categorías */}
       <div className="space-y-4 pt-2">
         <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-stone-300">Filtrar por faceta</h4>
         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
           <button 
-            onClick={() => onNextGema()} 
+            onClick={() => handleNextWithFade()} 
             className={`px-5 py-3 rounded-full text-[10px] font-bold transition-all border ${!currentGema.category ? 'bg-stone-900 text-[#D4AF37] border-stone-900' : 'bg-white text-stone-500 border-stone-100 hover:border-stone-200'}`}
           >
             Todas
@@ -89,7 +126,7 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
           {categories.map((cat) => (
             <button 
               key={cat} 
-              onClick={() => onNextGema(cat)} 
+              onClick={() => handleNextWithFade(cat)} 
               className={`px-5 py-3 rounded-full text-[10px] font-bold transition-all border ${currentGema.category === cat ? 'bg-stone-900 text-[#D4AF37] border-stone-900' : 'bg-white text-stone-500 border-stone-100 hover:border-stone-200'}`}
             >
               {cat}
@@ -119,15 +156,19 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
           >
             <Share2 size={18} />
           </button>
-          <button onClick={() => onNextGema()} className="p-3 bg-stone-50 rounded-full text-stone-400 hover:text-stone-900 transition-colors">
+          <button onClick={() => handleNextWithFade()} className="p-3 bg-stone-50 rounded-full text-stone-400 hover:text-stone-900 transition-colors">
             <Repeat size={18} />
           </button>
         </div>
       </div>
 
-      <div className="bg-white p-10 rounded-[3rem] border border-stone-100 shadow-xl space-y-8 relative group">
+      <div className="bg-white p-10 rounded-[3rem] border border-stone-100 shadow-xl space-y-8 relative group overflow-hidden">
         <Quote className="text-stone-50 absolute top-8 left-6 -z-10" size={80} />
-        <p className="text-xl font-serif italic text-stone-900 leading-snug">"{currentGema.phrase}"</p>
+        
+        <div className="space-y-6 text-center">
+          <p className="text-xl font-serif italic text-stone-900 leading-snug">"{currentGema.phrase}"</p>
+          <p className="text-[10px] text-stone-400 font-bold uppercase tracking-[0.2em]">— {currentGema.author || "Un Curso de Milagros"}</p>
+        </div>
         
         <div className="space-y-8">
           {currentGema.idea && (
@@ -137,24 +178,68 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
             </div>
           )}
           {currentGema.action && (
-            <div className="bg-stone-50 p-6 rounded-2xl border border-stone-100">
-              <div className="flex items-center gap-2 mb-2">
-                <Zap size={14} className="text-[#D4AF37]" />
-                <span className="text-[9px] font-black uppercase tracking-widest text-stone-900">Microacción (30-120s)</span>
+            <div className={`p-6 rounded-2xl border transition-all duration-700 ${isTimerRunning ? 'bg-stone-900 border-stone-800 shadow-2xl scale-[1.02]' : showDone ? 'bg-green-50 border-green-100' : 'bg-stone-50 border-stone-100'}`}>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Zap size={14} className={isTimerRunning ? "text-[#D4AF37] animate-pulse" : "text-[#D4AF37]"} />
+                  <span className={`text-[9px] font-black uppercase tracking-widest ${isTimerRunning ? 'text-stone-300' : 'text-stone-900'}`}>{isTimerRunning ? 'Practicando...' : 'Microacción'}</span>
+                </div>
+                {showDone && <CheckCircle size={14} className="text-green-500 animate-bounce" />}
+                {!isTimerRunning && !showDone && (
+                  <div className="flex gap-1">
+                    {[30, 60, 120].map((d) => (
+                      <button 
+                        key={d}
+                        onClick={() => setDuration(d)}
+                        className={`w-8 h-8 rounded-full text-[8px] font-bold flex items-center justify-center transition-all ${duration === d ? 'bg-stone-900 text-[#D4AF37]' : 'bg-stone-200 text-stone-500 hover:bg-stone-300'}`}
+                      >
+                        {d}s
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-              <p className="text-sm text-stone-700 font-medium">{currentGema.action}</p>
+              <p className={`text-sm leading-relaxed mb-6 ${isTimerRunning ? 'text-stone-400 italic' : 'text-stone-700 font-medium'}`}>{currentGema.action}</p>
+              
+              <button 
+                onClick={() => setIsTimerRunning(!isTimerRunning)}
+                className={`w-full py-4 rounded-xl flex items-center justify-center gap-3 transition-all active:scale-95 ${
+                  isTimerRunning 
+                    ? 'bg-stone-800 text-stone-300 border border-white/5' 
+                    : showDone 
+                      ? 'bg-green-500 text-white shadow-lg shadow-green-200' 
+                      : 'bg-[#D4AF37] text-white shadow-lg shadow-amber-100 hover:shadow-cyan-200 hover:bg-stone-900'
+                }`}
+              >
+                {isTimerRunning ? (
+                  <>
+                    <Timer size={16} className="animate-spin-slow" />
+                    <span className="text-xs font-black uppercase tracking-widest font-mono">{timeLeft}s restantes</span>
+                  </>
+                ) : showDone ? (
+                  <>
+                    <CheckCircle size={16} />
+                    <span className="text-xs font-black uppercase tracking-widest">¡Práctica Completada!</span>
+                  </>
+                ) : (
+                  <>
+                    <Timer size={16} />
+                    <span className="text-xs font-black uppercase tracking-widest text-white">Practicar ahora ({duration}s)</span>
+                  </>
+                )}
+              </button>
             </div>
           )}
-          {currentGema.mantra && (
+          {currentGema.mantra && !isTimerRunning && (
             <div className="pt-4 border-t border-stone-50">
-              <span className="text-[9px] font-black uppercase tracking-widest text-stone-300 block mb-1">Mantra</span>
+              <span className="text-[9px] font-black uppercase tracking-widest text-stone-300 block mb-1">Mantra del día</span>
               <p className="text-xs font-serif italic text-stone-400">"{currentGema.mantra}"</p>
             </div>
           )}
         </div>
       </div>
 
-      <button onClick={() => onNextGema(currentGema.category)} className="w-full py-5 bg-stone-900 text-[#D4AF37] rounded-full text-xs font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all">
+      <button onClick={() => handleNextWithFade(currentGema.category)} className="w-full py-5 bg-stone-900 text-[#D4AF37] rounded-full text-xs font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all">
         Otra Gema de {currentGema.category || "Sabiduría"}
       </button>
     </div>
