@@ -160,7 +160,7 @@ export function ZenPlayer() {
               className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
             />
             
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center gap-2">
               {TRACKS.map((t, i) => (
                 <button
                   key={t.id}
