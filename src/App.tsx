@@ -185,8 +185,8 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFCFB] flex justify-center font-sans antialiased selection:bg-[#D4AF37]/20">
-      <div className="w-full max-w-xl min-h-screen bg-white shadow-2xl flex flex-col relative border-x border-stone-100 overflow-hidden">
+    <div className="min-h-screen bg-slate-50 flex justify-center font-sans antialiased selection:bg-[#D4AF37]/20">
+      <div className="w-full max-w-xl lg:max-w-5xl min-h-screen bg-white shadow-2xl flex flex-col relative border-x border-stone-100 overflow-hidden">
         
         {/* Header */}
         <header className="px-6 sm:px-10 pt-10 pb-6 flex justify-between items-center bg-white/95 backdrop-blur-sm sticky top-0 z-50 border-b border-stone-50">
