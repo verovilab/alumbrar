@@ -25,9 +25,13 @@ CREATE TABLE IF NOT EXISTS public.gems (
 ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.gems ENABLE ROW LEVEL SECURITY;
 
--- Políticas: Todos pueden leer (Anónimos y autenticados)
+-- Políticas: Todos pueden leer. Solo autenticados/anon pueden escribir (Si quieres habilitar auto-sincronización)
 CREATE POLICY "Allow public read access on lessons" ON public.lessons FOR SELECT USING (true);
 CREATE POLICY "Allow public read access on gems" ON public.gems FOR SELECT USING (true);
+
+-- OPCIONAL: Habilitar que la App guarde lecciones IA automáticamente (Auto-sync)
+CREATE POLICY "Allow public insert/update on lessons" ON public.lessons 
+  FOR ALL USING (true) WITH CHECK (true);
 
 -- Índices para velocidad
 CREATE INDEX IF NOT EXISTS idx_lessons_number ON public.lessons(number);
