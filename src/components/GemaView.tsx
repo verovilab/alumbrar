@@ -26,7 +26,7 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
       .from('user_favorites')
       .select('id')
       .eq('user_id', userId)
-      .eq('gema_id', currentGema.id)
+      .eq('gema_id', String(currentGema.id))
       .single();
     
     setIsFavorite(!!data);
@@ -56,14 +56,14 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
           .from('user_favorites')
           .delete()
           .eq('user_id', userId)
-          .eq('gema_id', currentGema.id);
+          .eq('gema_id', String(currentGema.id));
         setIsFavorite(false);
       } else {
         await supabase
           .from('user_favorites')
           .insert({
             user_id: userId,
-            gema_id: currentGema.id
+            gema_id: String(currentGema.id)
           });
         setIsFavorite(true);
       }

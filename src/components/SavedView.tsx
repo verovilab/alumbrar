@@ -1,39 +1,74 @@
 import React, { useState, useEffect } from 'react';
-import { Heart, Bookmark, Trash2, ExternalLink } from 'lucide-react';
+import { Heart, Bookmark, Trash2 } from 'lucide-react';
 import { GemaIcon } from './GemaIcon';
 import { supabase } from '../lib/supabase';
+import { GEMAS, Gema } from '../data/gemas';
 
 interface SavedViewProps {
   userId: string;
 }
 
+interface FavoriteEntry {
+  id: string;
+  gema_id: string;
+  user_id: string;
+  displayData?: Partial<Gema>;
+  created_at?: string;
+}
+
+interface SnippetEntry {
+  id: string;
+  content: string;
+  source: string;
+  created_at: string;
+}
+
 export function SavedView({ userId }: SavedViewProps) {
   const [activeSubTab, setActiveSubTab] = useState<'gems' | 'snippets'>('gems');
-  const [savedGems, setSavedGems] = useState<any[]>([]);
-  const [savedSnippets, setSavedSnippets] = useState<any[]>([]);
+  const [savedGems, setSavedGems] = useState<FavoriteEntry[]>([]);
+  const [savedSnippets, setSavedSnippets] = useState<SnippetEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchSavedData();
-  }, [activeSubTab]);
+  }, [activeSubTab, userId]);
 
   const fetchSavedData = async () => {
     setIsLoading(true);
-    if (activeSubTab === 'gems') {
-      const { data } = await supabase
-        .from('user_favorites')
-        .select('*, gems(*)')
-        .eq('user_id', userId);
-      setSavedGems(data || []);
-    } else {
-      const { data } = await supabase
-        .from('user_snippets')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false });
-      setSavedSnippets(data || []);
+    try {
+      if (activeSubTab === 'gems') {
+        const { data, error } = await supabase
+          .from('user_favorites')
+          .select('*')
+          .eq('user_id', userId);
+        
+        if (error) throw error;
+
+        // Resolución híbrida: Vincular ID con contenido local o remoto
+        const resolved = (data || []).map((fav: any) => {
+          const localGema = GEMAS.find((g: Gema) => String(g.id) === fav.gema_id);
+          return {
+            ...fav,
+            displayData: localGema || { phrase: "Gema no encontrada", category: "Sistema" }
+          };
+        });
+
+        setSavedGems(resolved);
+      } else {
+        const { data, error } = await supabase
+          .from('user_snippets')
+          .select('*')
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        setSavedSnippets(data || []);
+      }
+    } catch (err) {
+      console.error("Error fetching saved data:", err);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const removeFavorite = async (id: string) => {
@@ -84,14 +119,13 @@ export function SavedView({ userId }: SavedViewProps) {
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-2">
                        <GemaIcon size={14} className="text-[#D4AF37]" />
-                       <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold">{fav.gems?.category}</span>
+                       <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold">{fav.displayData?.category}</span>
                     </div>
                     <button onClick={() => removeFavorite(fav.id)} className="p-2 text-stone-200 hover:text-red-400 transition-colors">
                       <Trash2 size={16} />
                     </button>
                   </div>
-                  <p className="font-serif italic text-stone-800 mb-2">"{fav.gems?.phrase}"</p>
-                  <p className="text-[10px] text-stone-400 text-right">— {fav.gems?.author}</p>
+                  <p className="font-serif italic text-stone-800 mb-2">"{fav.displayData?.phrase}"</p>
                 </div>
               ))
             ) : (
