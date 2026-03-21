@@ -104,8 +104,9 @@ export default function App() {
       const result = await model.generateContent(prompt);
       const response = await result.response;
       setLessonContent(response.text() || "La Verdad espera tu reconocimiento silencioso.");
-    } catch (e) {
-      setLessonContent("Hubo un problema al cargar la lección. Verifica tu conexión o API_KEY.");
+    } catch (e: any) {
+      console.error("Gemini Lesson Error:", e);
+      setLessonContent(`Error: ${e.message || "Hubo un problema al cargar la lección. Verifica tu conexión o API_KEY."}`);
     } finally {
       setIsLoadingLesson(false);
     }
