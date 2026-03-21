@@ -35,10 +35,10 @@ CREATE INDEX IF NOT EXISTS idx_gems_category ON public.gems(category);
 
 -- Datos de ejemplo (Semilla)
 INSERT INTO public.lessons (number, title, content) VALUES
-(1, "Nada real puede ser amenazado.", "Esta es la base de todo el curso. El miedo no tiene lugar en la realidad porque la realidad es solo Amor..."),
-(79, "Permítaseme reconocer el problema para que pueda ser resuelto.", "El único problema es la separación, y la única solución es el perdón. Reconocer esto ahorra tiempo eterno...");
+(1, 'Nada real puede ser amenazado.', 'Esta es la base de todo el curso. El miedo no tiene lugar en la realidad porque la realidad es solo Amor...'),
+(79, 'Permítaseme reconocer el problema para que pueda ser resuelto.', 'El único problema es la separación, y la única solución es el perdón. Reconocer esto ahorra tiempo eterno...');
 
-INSERT INTO public.gems (category, content, is_daily) VALUES
-('Calma', 'La paz de Dios es mi único objetivo hoy.', true),
-('Perdón', 'No soy un cuerpo. Soy libre.', false),
-('Confianza', 'Dios va conmigo donde quiera que yo voy.', true);
+INSERT INTO public.gems (category, phrase, idea, action, mantra, is_daily) VALUES
+('Calma', 'La paz de Dios es mi único objetivo hoy.', 'Solo la Paz es real.', 'Respira profundamente 3 veces.', 'Paz.', true),
+('Perdón', 'No soy un cuerpo. Soy libre.', 'Mi identidad está en el cielo.', 'Suelta el juicio sobre alguien ahora.', 'Libertad.', false),
+('Confianza', 'Dios va conmigo donde quiera que yo voy.', 'Nunca estoy solo.', 'Confía en el paso de hoy.', 'Confianza.', true);
