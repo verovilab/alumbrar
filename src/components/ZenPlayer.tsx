@@ -6,19 +6,25 @@ const TRACKS = [
     id: 'bowls', 
     name: 'Cuencos Tibetanos', 
     icon: <Bell size={14} />, 
-    url: 'https://archive.org/download/meditation-bowl-sounds/meditation-bowl-1.mp3' 
+    url: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Tibetan_Singing_Bowl_-_1.mp3' 
   },
   { 
     id: 'water', 
     name: 'Aguas de Paz', 
     icon: <Waves size={14} />, 
-    url: 'https://archive.org/download/relaxing-nature-sounds-bubbles/relaxing-nature-sounds-bubbles.mp3' 
+    url: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/River_flow_sounds.mp3'
   },
   { 
     id: 'zen', 
     name: 'Música Zen', 
     icon: <Music size={14} />, 
-    url: 'https://archive.org/download/zen-meditation-music-11441/zen-meditation-music-11441.mp3' 
+    url: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Bells_and_birds.mp3'
+  },
+  {
+    id: 'test',
+    name: 'Diagnóstico',
+    icon: <Bell size={14} />,
+    url: 'https://www.soundjay.com/buttons/beep-01a.mp3'
   }
 ];
 
@@ -27,11 +33,18 @@ export function ZenPlayer() {
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [volume, setVolume] = useState(0.3);
   const [isExpanded, setIsExpanded] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioObj = useRef<HTMLAudioElement | null>(null);
 
   const currentTrack = TRACKS[currentTrackIndex];
 
+  // Inicializar audio una sola vez
   useEffect(() => {
+    if (!audioObj.current) {
+      audioObj.current = new Audio();
+      audioObj.current.loop = true;
+      audioObj.current.crossOrigin = "anonymous";
+    }
+
     // Cargar preferencia
     const saved = localStorage.getItem('zen_audio_pref');
     if (saved) {
@@ -39,58 +52,66 @@ export function ZenPlayer() {
         const pref = JSON.parse(saved);
         setCurrentTrackIndex(pref.trackIndex || 0);
         setVolume(pref.volume || 0.3);
-      } catch (e) {
-        console.error("Error parsing audio pref", e);
-      }
+      } catch (e) {}
     }
 
     const handleToggle = (e: any) => {
       if (e.detail.action === 'play') {
         setIsPlaying(true);
         setIsExpanded(true);
-      } else if (e.detail.action === 'stop') {
-        setIsPlaying(false);
       }
     };
 
     window.addEventListener('toggle-zen-audio', handleToggle);
-    return () => window.removeEventListener('toggle-zen-audio', handleToggle);
+    return () => {
+      window.removeEventListener('toggle-zen-audio', handleToggle);
+      if (audioObj.current) {
+        audioObj.current.pause();
+        audioObj.current = null;
+      }
+    };
   }, []);
 
+  // Actualizar volumen
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-      audioRef.current.loop = true;
-      
-      const playAudio = async () => {
+    if (audioObj.current) {
+      audioObj.current.volume = volume;
+    }
+  }, [volume]);
+
+  // Manejar cambio de Pista y Play/Pause
+  useEffect(() => {
+    const playLogic = async () => {
+      if (!audioObj.current) return;
+
+      if (isPlaying) {
+        // Si la URL cambió, cargamos la nueva
+        const currentSrc = audioObj.current.src;
+        // Normalizar URL para comparación
+        if (currentSrc !== currentTrack.url) {
+          audioObj.current.src = currentTrack.url;
+          audioObj.current.load();
+        }
+        
         try {
-          // Si el src cambió o no está seteado
-          if (audioRef.current && audioRef.current.src !== currentTrack.url) {
-            audioRef.current.src = currentTrack.url;
-            audioRef.current.load();
-          }
-          
-          if (isPlaying && audioRef.current) {
-            await audioRef.current.play();
-          } else if (audioRef.current) {
-            audioRef.current.pause();
-          }
+          await audioObj.current.play();
         } catch (e) {
-          console.log("Audio playback blocked or failed:", e);
+          console.error("Audio error:", e);
           setIsPlaying(false);
         }
-      };
+      } else {
+        audioObj.current.pause();
+      }
+    };
 
-      playAudio();
-    }
-    
-    // Guardar preferencia
+    playLogic();
+
     localStorage.setItem('zen_audio_pref', JSON.stringify({ 
       trackIndex: currentTrackIndex, 
       volume, 
       isPlaying 
     }));
-  }, [isPlaying, currentTrackIndex, volume]);
+  }, [isPlaying, currentTrackIndex]);
 
   const togglePlay = () => setIsPlaying(!isPlaying);
   const nextTrack = () => setCurrentTrackIndex((prev) => (prev + 1) % TRACKS.length);
@@ -163,8 +184,6 @@ export function ZenPlayer() {
           )}
         </div>
       </div>
-
-      <audio ref={audioRef} />
     </div>
   );
 }
