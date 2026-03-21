@@ -42,9 +42,9 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
     } else if (timeLeft === 0 && isTimerRunning) {
       setIsTimerRunning(false);
       setShowDone(true);
-      // Bell Sound / Visual FeedBack
-      const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
-      audio.volume = 0.3;
+      // Bell Sound / Visual FeedBack (Subtle Meditation Bell)
+      const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2560/2560-preview.mp3');
+      audio.volume = 0.4;
       audio.play().catch(() => {});
     }
     return () => clearInterval(interval);
