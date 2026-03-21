@@ -160,12 +160,13 @@ export function ZenPlayer() {
               className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
             />
             
-            <div className="flex justify-center gap-2">
+            <div className="grid grid-cols-4 gap-1">
               {TRACKS.map((t, i) => (
                 <button
                   key={t.id}
                   onClick={() => handleSelectTrack(i)}
-                  className={`p-2 rounded-xl transition-all ${currentTrackIndex === i ? 'bg-[#D4AF37] text-white' : 'text-white/40 hover:bg-white/5'}`}
+                  title={t.name}
+                  className={`flex items-center justify-center p-2 rounded-xl transition-all ${currentTrackIndex === i ? 'bg-[#D4AF37] text-white' : 'text-white/40 hover:bg-white/5'}`}
                 >
                   {t.icon}
                 </button>
