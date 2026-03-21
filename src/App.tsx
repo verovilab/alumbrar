@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
-  Home, BookOpen, MessageCircle, RefreshCw, LogOut, Heart, User
+  Home, BookOpen, MessageCircle, RefreshCw, LogOut, Heart, User, Activity
 } from 'lucide-react';
 import { GemaIcon } from './components/GemaIcon';
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -17,6 +17,7 @@ import { LandingView } from './components/LandingView';
 import { SavedView } from './components/SavedView';
 import { ProfileView } from './components/ProfileView';
 import { ZenPlayer } from './components/ZenPlayer';
+import { PracticeView } from './components/PracticeView';
 
 // Hooks & Data
 import { GEMAS } from './data/gemas';
@@ -32,7 +33,7 @@ export default function App() {
   const [showPricing, setShowPricing] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   
-  const [activeTab, setActiveTab] = useState<'home' | 'gems' | 'qa' | 'lessons' | 'saved' | 'profile'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'gems' | 'qa' | 'lessons' | 'saved' | 'profile' | 'practice'>('home');
   const [input, setInput] = useState('');
   const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
   const [lessonContent, setLessonContent] = useState<string | null>(null);
@@ -283,16 +284,21 @@ export default function App() {
           {activeTab === 'profile' && (
             <ProfileView session={session} onSignOut={() => supabase.auth.signOut()} />
           )}
+
+          {activeTab === 'practice' && (
+            <PracticeView userId={session?.user?.id} dayOfYear={dayOfYear} />
+          )}
         </main>
 
         {/* Navegación - Optimizada para 6 ítems */}
         <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[95%] max-w-[600px] bg-white/95 backdrop-blur-xl border border-stone-100 shadow-2xl flex justify-around items-center py-4 px-2 z-[100] rounded-[3rem]">
-          <NavBtn active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={<Home size={20}/>} label="Inicio" />
-          <NavBtn active={activeTab === 'gems'} onClick={() => setActiveTab('gems')} icon={<GemaIcon size={20}/>} label="Gema" />
-          <NavBtn active={activeTab === 'qa'} onClick={() => setActiveTab('qa')} icon={<MessageCircle size={20}/>} label="Guía" />
-          <NavBtn active={activeTab === 'saved'} onClick={() => setActiveTab('saved')} icon={<Heart size={20}/>} label="Guardado" />
-          <NavBtn active={activeTab === 'lessons'} onClick={() => setActiveTab('lessons')} icon={<BookOpen size={20}/>} label="Curso" />
-          <NavBtn active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} icon={<User size={20}/>} label="Perfil" />
+          <NavBtn active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={<Home size={18}/>} label="Inicio" />
+          <NavBtn active={activeTab === 'gems'} onClick={() => setActiveTab('gems')} icon={<GemaIcon size={18}/>} label="Gema" />
+          <NavBtn active={activeTab === 'practice'} onClick={() => setActiveTab('practice')} icon={<Activity size={18}/>} label="Práctica" />
+          <NavBtn active={activeTab === 'qa'} onClick={() => setActiveTab('qa')} icon={<MessageCircle size={18}/>} label="Guía" />
+          <NavBtn active={activeTab === 'saved'} onClick={() => setActiveTab('saved')} icon={<Heart size={18}/>} label="Guardado" />
+          <NavBtn active={activeTab === 'lessons'} onClick={() => setActiveTab('lessons')} icon={<BookOpen size={18}/>} label="Curso" />
+          <NavBtn active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} icon={<User size={18}/>} label="Perfil" />
         </nav>
 
         {showPricing && (
