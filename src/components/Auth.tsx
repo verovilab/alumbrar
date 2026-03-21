@@ -45,9 +45,9 @@ export function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFCFB] flex items-center justify-center p-6">
-      <div className="w-full max-w-md bg-white rounded-[3rem] shadow-2xl p-10 border border-stone-100 space-y-8 animate-fade-up">
-        <div className="text-center space-y-2">
+    <div className="min-h-screen bg-[#FDFCFB] flex items-center justify-center p-4 sm:p-6">
+      <div className="w-full max-w-lg bg-white rounded-[2rem] sm:rounded-[3.5rem] shadow-2xl p-6 sm:p-12 border border-stone-100 space-y-8 animate-fade-up">
+        <div className="text-center space-y-3">
           <div className="w-16 h-16 bg-stone-900 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
             <Sparkles className="text-[#D4AF37]" size={32} />
           </div>
