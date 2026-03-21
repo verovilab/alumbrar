@@ -16,6 +16,7 @@ import { Auth } from './components/Auth';
 import { LandingView } from './components/LandingView';
 import { SavedView } from './components/SavedView';
 import { ProfileView } from './components/ProfileView';
+import { ZenPlayer } from './components/ZenPlayer';
 
 // Hooks & Data
 import { GEMAS } from './data/gemas';
@@ -300,6 +301,7 @@ export default function App() {
             onClose={() => setShowPricing(false)} 
           />
         )}
+        <ZenPlayer />
       </div>
     </div>
   );
