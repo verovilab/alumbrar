@@ -79,7 +79,7 @@ export function SavedView({ userId }: SavedViewProps) {
         // Finalizar resolución para los que aún no tengan data
         resolved.forEach(f => {
            if (!f.displayData) {
-             f.displayData = { phrase: "Gema no encontrada", category: "Sistema" };
+             f.displayData = { phrase: "Gema no encontrada", category: "Presencia" as GemaCategory };
            }
         });
 
