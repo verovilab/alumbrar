@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Diamond, Repeat, Quote, Zap, Heart } from 'lucide-react';
+import { Repeat, Quote, Zap, Heart } from 'lucide-react';
+import { GemaIcon } from './GemaIcon';
 import { Gema } from '../data/gemas';
 import { supabase } from '../lib/supabase';
 
@@ -86,7 +87,7 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-stone-900 rounded-full flex items-center justify-center text-[#D4AF37]">
-            <Diamond size={14} />
+            <GemaIcon size={14} />
           </div>
           <h3 className="text-lg font-serif font-bold text-stone-900">{currentGema.category || "Inspiración"}</h3>
         </div>

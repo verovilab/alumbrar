@@ -1,4 +1,5 @@
-import { Wind, BookOpen, Diamond } from 'lucide-react';
+import { Wind, BookOpen } from 'lucide-react';
+import { GemaIcon } from './GemaIcon';
 
 interface HomeViewProps {
   dayOfYear: number;
@@ -29,7 +30,7 @@ export function HomeView({ dayOfYear, onLoadLesson, onSetTab, currentGema }: Hom
           <p className="text-[10px] lg:text-xs text-stone-400 uppercase tracking-widest mt-1">Sugerida hoy</p>
         </button>
         <button onClick={() => onSetTab('gems')} className="bg-[#FAF8F5] p-8 lg:p-12 rounded-[2rem] text-left hover:shadow-lg transition-all group">
-          <Diamond className="text-[#D4AF37] mb-4 lg:mb-6 transition-transform group-hover:scale-110" size={24} />
+          <GemaIcon className="text-[#D4AF37] mb-4 lg:mb-6 transition-transform group-hover:scale-110" size={24} />
           <span className="text-xs lg:text-sm font-bold text-stone-900 block">Gema Diaria</span>
           <p className="text-[10px] lg:text-xs text-stone-400 uppercase tracking-widest mt-1">Inspiración</p>
         </button>

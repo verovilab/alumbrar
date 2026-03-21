@@ -1,4 +1,5 @@
-import { BookOpen, Diamond, MessageCircle, Wind, ArrowRight } from 'lucide-react';
+import { BookOpen, MessageCircle, Wind, ArrowRight } from 'lucide-react';
+import { GemaIcon } from './GemaIcon';
 
 interface LandingViewProps {
   onShowAuth: () => void;
@@ -32,14 +33,14 @@ export function LandingView({ onShowAuth }: LandingViewProps) {
           <p className="text-sm text-stone-400 leading-relaxed">Accede al resumen y práctica de la lección que te corresponde hoy de forma instantánea.</p>
         </div>
         <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-stone-100 space-y-3 hover:shadow-xl transition-all">
-          <Diamond className="text-[#D4AF37]" size={32} />
+          <GemaIcon className="text-[#D4AF37]" size={32} />
           <h3 className="text-xl font-bold font-serif">Gemas de Sabiduría</h3>
           <p className="text-sm text-stone-400 leading-relaxed">Inspiraciones aleatorias y temáticas para elevar tu vibración en momentos de duda.</p>
         </div>
         <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-stone-100 space-y-3 hover:shadow-xl transition-all">
           <MessageCircle className="text-[#D4AF37]" size={32} />
           <h3 className="text-xl font-bold font-serif">Guía Espiritual IA</h3>
-          <p className="text-sm text-stone-400 leading-relaxed">Un chat inteligente entrenado en la profundidad del Curso para despejar tus dudas.</p>
+          <p className="text-sm text-stone-400 cemetery-stone-400 leading-relaxed">Un chat inteligente entrenado en la profundidad del Curso para despejar tus dudas.</p>
         </div>
       </div>
 

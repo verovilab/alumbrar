@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
-  Home, Diamond, BookOpen, MessageCircle, RefreshCw, LogOut
+  Home, BookOpen, MessageCircle, RefreshCw, LogOut
 } from 'lucide-react';
+import { GemaIcon } from './components/GemaIcon';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { supabase } from './lib/supabase';
 
@@ -274,7 +275,7 @@ export default function App() {
         {/* Navegación */}
         <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-[500px] bg-white/95 backdrop-blur-xl border border-stone-100 shadow-2xl flex justify-around items-center py-4 px-6 z-[100] rounded-[3rem]">
           <NavBtn active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={<Home size={22}/>} label="Inicio" />
-          <NavBtn active={activeTab === 'gems'} onClick={() => setActiveTab('gems')} icon={<Diamond size={22}/>} label="Gema" />
+          <NavBtn active={activeTab === 'gems'} onClick={() => setActiveTab('gems')} icon={<GemaIcon size={22}/>} label="Gema" />
           <NavBtn active={activeTab === 'qa'} onClick={() => setActiveTab('qa')} icon={<MessageCircle size={22}/>} label="Guía" />
           <NavBtn active={activeTab === 'lessons'} onClick={() => setActiveTab('lessons')} icon={<BookOpen size={22}/>} label="Curso" />
         </nav>
