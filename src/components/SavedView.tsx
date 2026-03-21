@@ -37,20 +37,50 @@ export function SavedView({ userId }: SavedViewProps) {
     setIsLoading(true);
     try {
       if (activeSubTab === 'gems') {
-        const { data, error } = await supabase
+        const { data: favorites, error } = await supabase
           .from('user_favorites')
           .select('*')
           .eq('user_id', userId);
         
         if (error) throw error;
 
-        // Resolución híbrida: Vincular ID con contenido local o remoto
-        const resolved = (data || []).map((fav: any) => {
+        // 1. Identificar gemas locales y remotas
+        const resolved: FavoriteEntry[] = [];
+        const remoteIds: string[] = [];
+
+        for (const fav of (favorites || [])) {
           const localGema = GEMAS.find((g: Gema) => String(g.id) === fav.gema_id);
-          return {
-            ...fav,
-            displayData: localGema || { phrase: "Gema no encontrada", category: "Sistema" }
-          };
+          if (localGema) {
+            resolved.push({ ...fav, displayData: localGema });
+          } else {
+            // Es remota, guardar ID para consulta masiva
+            remoteIds.push(fav.gema_id);
+            resolved.push({ ...fav }); // Placeholder momentáneo
+          }
+        }
+
+        // 2. Fetch de gemas remotas si existen
+        if (remoteIds.length > 0) {
+          const { data: remoteGems } = await supabase
+            .from('gems')
+            .select('*')
+            .in('id', remoteIds);
+
+          if (remoteGems) {
+            remoteGems.forEach(rg => {
+              const favIndex = resolved.findIndex(f => f.gema_id === rg.id);
+              if (favIndex !== -1) {
+                resolved[favIndex].displayData = rg;
+              }
+            });
+          }
+        }
+
+        // Finalizar resolución para los que aún no tengan data
+        resolved.forEach(f => {
+           if (!f.displayData) {
+             f.displayData = { phrase: "Gema no encontrada", category: "Sistema" };
+           }
         });
 
         setSavedGems(resolved);
