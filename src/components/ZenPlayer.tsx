@@ -6,19 +6,19 @@ const TRACKS = [
     id: 'bowls', 
     name: 'Cuencos Tibetanos', 
     icon: <Bell size={14} />, 
-    url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/piano-mp3.mp3' 
+    url: '/audio/bowls.mp3' 
   },
   { 
     id: 'water', 
     name: 'Aguas de Paz', 
     icon: <Waves size={14} />, 
-    url: 'https://www.soundjay.com/buttons/beep-01a.mp3'
+    url: '/audio/water.mp3'
   },
   { 
     id: 'zen', 
     name: 'Música Zen', 
     icon: <Music size={14} />, 
-    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+    url: '/audio/zen.mp3'
   }
 ];
 
