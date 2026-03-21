@@ -119,13 +119,13 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#FDFCFB] flex justify-center font-sans antialiased selection:bg-[#D4AF37]/20">
-      <div className="w-full max-w-lg min-h-screen bg-white shadow-2xl flex flex-col relative border-x border-stone-100 overflow-hidden">
+      <div className="w-full max-w-xl min-h-screen bg-white shadow-2xl flex flex-col relative border-x border-stone-100 overflow-hidden">
         
         {/* Header */}
-        <header className="px-8 pt-10 pb-6 flex justify-between items-center bg-white/95 backdrop-blur-sm sticky top-0 z-50 border-b border-stone-50">
+        <header className="px-6 sm:px-10 pt-10 pb-6 flex justify-between items-center bg-white/95 backdrop-blur-sm sticky top-0 z-50 border-b border-stone-50">
           <div className="cursor-pointer" onClick={() => setActiveTab('home')}>
-            <h1 className="text-2xl font-serif font-bold text-stone-900 tracking-tight">Camino a UCDM</h1>
-            <p className="text-[9px] uppercase tracking-[0.4em] text-stone-400 font-bold">Luz & Verdad</p>
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900 tracking-tight">Camino a UCDM</h1>
+            <p className="text-[10px] uppercase tracking-[0.4em] text-stone-400 font-bold">Luz & Verdad</p>
           </div>
           <div className="flex items-center gap-2">
             <button 
@@ -146,7 +146,7 @@ export default function App() {
         </header>
 
         {/* Contenido */}
-        <main className="flex-1 px-8 pt-6 pb-40 overflow-y-auto no-scrollbar">
+        <main className="flex-1 px-6 sm:px-10 pt-6 pb-40 overflow-y-auto no-scrollbar">
           {activeTab === 'home' && (
             <HomeView 
               dayOfYear={dayOfYear} 
@@ -187,11 +187,11 @@ export default function App() {
         </main>
 
         {/* Navegación */}
-        <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-[440px] bg-white/90 backdrop-blur-xl border border-stone-100 shadow-2xl flex justify-around items-center py-4 px-6 z-[100] rounded-[3rem]">
-          <NavBtn active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={<Home size={20}/>} label="Inicio" />
-          <NavBtn active={activeTab === 'gems'} onClick={() => setActiveTab('gems')} icon={<Star size={20}/>} label="Gema" />
-          <NavBtn active={activeTab === 'qa'} onClick={() => setActiveTab('qa')} icon={<MessageCircle size={20}/>} label="Guía" />
-          <NavBtn active={activeTab === 'lessons'} onClick={() => setActiveTab('lessons')} icon={<BookOpen size={20}/>} label="Curso" />
+        <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-[500px] bg-white/95 backdrop-blur-xl border border-stone-100 shadow-2xl flex justify-around items-center py-4 px-6 z-[100] rounded-[3rem]">
+          <NavBtn active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={<Home size={22}/>} label="Inicio" />
+          <NavBtn active={activeTab === 'gems'} onClick={() => setActiveTab('gems'} icon={<Star size={22}/>} label="Gema" />
+          <NavBtn active={activeTab === 'qa'} onClick={() => setActiveTab('qa')} icon={<MessageCircle size={22}/>} label="Guía" />
+          <NavBtn active={activeTab === 'lessons'} onClick={() => setActiveTab('lessons')} icon={<BookOpen size={22}/>} label="Curso" />
         </nav>
 
         {showPricing && (
