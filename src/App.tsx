@@ -190,9 +190,14 @@ export default function App() {
         
         {/* Header */}
         <header className="px-6 sm:px-10 pt-10 pb-6 flex justify-between items-center bg-white/95 backdrop-blur-sm sticky top-0 z-50 border-b border-stone-50">
-          <div className="cursor-pointer" onClick={() => setActiveTab('home')}>
-            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900 tracking-tight">Camino a UCDM</h1>
-            <p className="text-[10px] uppercase tracking-[0.4em] text-stone-400 font-bold">Luz & Verdad</p>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden border border-slate-700">
+              <img src="/favicon.png" alt="Logo" className="w-full h-full object-cover" />
+            </div>
+            <div className="cursor-pointer" onClick={() => setActiveTab('home')}>
+              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900 tracking-tight">Camino a UCDM</h1>
+              <p className="text-[10px] uppercase tracking-[0.4em] text-stone-400 font-bold">Luz & Verdad</p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <button 
