@@ -51,8 +51,8 @@ export function Auth() {
           <div className="w-16 h-16 bg-stone-900 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl">
             <Sparkles className="text-[#D4AF37]" size={32} />
           </div>
-          <h1 className="text-3xl font-serif font-bold text-stone-900">Camino a UCDM</h1>
-          <p className="text-[10px] uppercase tracking-[0.4em] text-stone-400 font-bold">Tu viaje interior comienza aquí</p>
+          <h1 className="text-3xl font-serif font-bold text-stone-900 tracking-tight">Alumbrar</h1>
+          <p className="text-[10px] uppercase tracking-[0.4em] text-stone-400 font-black">Un Espacio de Quietud</p>
         </div>
 
         {message && (
