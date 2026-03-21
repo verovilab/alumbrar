@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Heart, Bookmark, Trash2 } from 'lucide-react';
 import { GemaIcon } from './GemaIcon';
 import { supabase } from '../lib/supabase';
-import { GEMAS, Gema } from '../data/gemas';
+import { GEMAS, Gema, GemaCategory } from '../data/gemas';
 
 interface SavedViewProps {
   userId: string;
