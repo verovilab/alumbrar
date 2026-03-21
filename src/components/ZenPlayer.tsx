@@ -6,19 +6,19 @@ const TRACKS = [
     id: 'bowls', 
     name: 'Cuencos Tibetanos', 
     icon: <Bell size={14} />, 
-    url: 'https://cdn.pixabay.com/download/audio/2022/02/07/audio_663309a4d8.mp3?filename=tibetan-singing-bowl-loop-7517.mp3' 
+    url: 'https://www.chosic.com/wp-content/uploads/2021/04/Tibetan-Singing-Bowls.mp3' 
   },
   { 
     id: 'water', 
     name: 'Aguas de Paz', 
     icon: <Waves size={14} />, 
-    url: 'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c364c679a9.mp3?filename=gentle-ocean-waves-birdson-soft-nature-sounds-13113.mp3' 
+    url: 'https://www.chosic.com/wp-content/uploads/2021/05/River-Nature-Sounds.mp3' 
   },
   { 
     id: 'zen', 
     name: 'Música Zen', 
     icon: <Music size={14} />, 
-    url: 'https://cdn.pixabay.com/download/audio/2022/05/17/audio_1ee8f39564.mp3?filename=meditation-zen-yoga-music-11441.mp3' 
+    url: 'https://www.chosic.com/wp-content/uploads/2021/04/Spirit-of-the-Night.mp3' 
   }
 ];
 
@@ -35,13 +35,15 @@ export function ZenPlayer() {
     // Cargar preferencia
     const saved = localStorage.getItem('zen_audio_pref');
     if (saved) {
-      const pref = JSON.parse(saved);
-      setCurrentTrackIndex(pref.trackIndex || 0);
-      setVolume(pref.volume || 0.3);
+      try {
+        const pref = JSON.parse(saved);
+        setCurrentTrackIndex(pref.trackIndex || 0);
+        setVolume(pref.volume || 0.3);
+      } catch (e) {
+        console.error("Error parsing audio pref", e);
+      }
     }
-  }, []);
 
-  useEffect(() => {
     const handleToggle = (e: any) => {
       if (e.detail.action === 'play') {
         setIsPlaying(true);
@@ -61,14 +63,27 @@ export function ZenPlayer() {
       audioRef.current.loop = true;
       
       if (isPlaying) {
-        audioRef.current.play().catch(e => console.log("Audio play error", e));
+        // Forzar recarga si el src cambió
+        if (audioRef.current.src !== currentTrack.url) {
+          audioRef.current.src = currentTrack.url;
+          audioRef.current.load();
+        }
+        audioRef.current.play().catch(e => {
+          console.log("Audio play error (likely browser policy):", e);
+          // Si falla por política de reproducción, pausamos para que el usuario deba darle play manualmente
+          setIsPlaying(false);
+        });
       } else {
         audioRef.current.pause();
       }
     }
     
     // Guardar preferencia
-    localStorage.setItem('zen_audio_pref', JSON.stringify({ trackIndex: currentTrackIndex, volume }));
+    localStorage.setItem('zen_audio_pref', JSON.stringify({ 
+      trackIndex: currentTrackIndex, 
+      volume, 
+      isPlaying // Para saber si estaba sonando en HomeView
+    }));
   }, [isPlaying, currentTrackIndex, volume]);
 
   const togglePlay = () => setIsPlaying(!isPlaying);
@@ -76,10 +91,10 @@ export function ZenPlayer() {
 
   return (
     <div className={`fixed bottom-24 right-6 z-50 transition-all duration-500 ease-[cubic-bezier(0.23, 1, 0.32, 1)] ${isExpanded ? 'w-48' : 'w-12'}`}>
-      <div className="glass-dark rounded-full overflow-hidden shadow-2xl border border-white/10 flex flex-col">
+      <div className={`glass-dark rounded-2xl overflow-hidden shadow-2xl border border-white/10 flex flex-col transition-all duration-500`}>
         
         {/* Expanded Controls */}
-        <div className={`transition-all duration-500 ${isExpanded ? 'h-32 p-4 opacity-100' : 'h-0 opacity-0'}`}>
+        <div className={`transition-all duration-500 ${isExpanded ? 'h-32 p-4 opacity-100' : 'h-0 opacity-0 overflow-hidden'}`}>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-[9px] font-black uppercase tracking-widest text-[#D4AF37] truncate w-24">
@@ -105,7 +120,7 @@ export function ZenPlayer() {
                 <button 
                   key={t.id} 
                   onClick={() => setCurrentTrackIndex(i)}
-                  className={`p-2 rounded-lg transition-all ${currentTrackIndex === i ? 'bg-[#D4AF37] text-white' : 'text-white/40 hover:bg-white/5'}`}
+                  className={`p-2 rounded-xl transition-all ${currentTrackIndex === i ? 'bg-[#D4AF37] text-white' : 'text-white/40 hover:bg-white/5'}`}
                 >
                   {t.icon}
                 </button>
@@ -118,7 +133,7 @@ export function ZenPlayer() {
         <div className="h-12 flex items-center justify-between px-2">
           <button 
             onClick={togglePlay}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isPlaying ? 'bg-[#D4AF37] text-white animate-pulse' : 'bg-white/5 text-white/40 hover:bg-white/10'}`}
+            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${isPlaying ? 'bg-[#D4AF37] text-white animate-pulse' : 'bg-white/5 text-white/40 hover:bg-white/10'}`}
           >
             {isPlaying ? <Pause size={14} /> : <Play size={14} className="ml-0.5" />}
           </button>
@@ -143,11 +158,7 @@ export function ZenPlayer() {
         </div>
       </div>
 
-      {/* Hidden Audio Element */}
-      <audio 
-        ref={audioRef} 
-        src={currentTrack.url}
-      />
+      <audio ref={audioRef} />
     </div>
   );
 }
