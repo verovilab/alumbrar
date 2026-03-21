@@ -38,6 +38,19 @@ export default function App() {
   const [lessonContent, setLessonContent] = useState<string | null>(null);
   const [isLoadingLesson, setIsLoadingLesson] = useState(false);
 
+  // Manejar retorno desde Stripe Checkout
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('checkout') === 'success') {
+      // Limpiar URL y refrescar suscripción
+      window.history.replaceState({}, '', window.location.pathname);
+      // Dar tiempo a que el webhook procese y luego refrescar
+      setTimeout(() => {
+        if (session?.user?.id) checkSubscription(session.user.id);
+      }, 2000);
+    }
+  }, [session]);
+
   // Auth & Subscription Listener
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
@@ -281,7 +294,12 @@ export default function App() {
           )}
 
           {activeTab === 'profile' && (
-            <ProfileView session={session} onSignOut={() => supabase.auth.signOut()} />
+            <ProfileView
+              session={session}
+              onSignOut={() => supabase.auth.signOut()}
+              isPremium={isPremium}
+              onShowPricing={() => setShowPricing(true)}
+            />
           )}
         </main>
 
