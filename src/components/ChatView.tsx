@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
-import { Sparkles, Send } from 'lucide-react';
+import { Sparkles, Send, Bookmark } from 'lucide-react';
 import { FormattedText } from './FormattedText';
+import { supabase } from '../lib/supabase';
 
 interface Message {
   role: 'user' | 'model';
@@ -14,10 +15,25 @@ interface ChatViewProps {
   input: string;
   setInput: (val: string) => void;
   onSendMessage: () => void;
+  userId?: string;
 }
 
-export function ChatView({ messages, isTyping, input, setInput, onSendMessage }: ChatViewProps) {
+export function ChatView({ messages, isTyping, input, setInput, onSendMessage, userId }: ChatViewProps) {
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  const saveSnippet = async (text: string) => {
+    if (!userId) return;
+    try {
+      await supabase.from('user_snippets').insert({
+        user_id: userId,
+        content: text,
+        source: 'Guía Espiritual'
+      });
+      alert('Frase guardada en tus tesoros ✨');
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -34,8 +50,17 @@ export function ChatView({ messages, isTyping, input, setInput, onSendMessage }:
         )}
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[85%] px-7 py-5 rounded-[2rem] ${m.role === 'user' ? 'bg-stone-900 text-white rounded-tr-none' : 'bg-stone-50 text-stone-800 rounded-tl-none border border-stone-100'}`}>
+            <div className={`max-w-[85%] px-7 py-5 rounded-[2rem] relative group ${m.role === 'user' ? 'bg-stone-900 text-white rounded-tr-none' : 'bg-stone-50 text-stone-800 rounded-tl-none border border-stone-100'}`}>
               <FormattedText text={m.text} />
+              {m.role === 'model' && (
+                <button 
+                  onClick={() => saveSnippet(m.text)}
+                  className="absolute -right-10 top-2 p-2 text-stone-300 hover:text-stone-900 opacity-0 group-hover:opacity-100 transition-all active:scale-90"
+                  title="Guardar en mis tesoros"
+                >
+                  <Bookmark size={16} />
+                </button>
+              )}
             </div>
           </div>
         ))}

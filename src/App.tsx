@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
-  Home, BookOpen, MessageCircle, RefreshCw, LogOut
+  Home, BookOpen, MessageCircle, RefreshCw, LogOut, Heart, User
 } from 'lucide-react';
 import { GemaIcon } from './components/GemaIcon';
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -14,6 +14,8 @@ import { ChatView } from './components/ChatView';
 import { LessonsView } from './components/LessonsView';
 import { Auth } from './components/Auth';
 import { LandingView } from './components/LandingView';
+import { SavedView } from './components/SavedView';
+import { ProfileView } from './components/ProfileView';
 
 // Hooks & Data
 import { GEMAS } from './data/gemas';
@@ -29,7 +31,7 @@ export default function App() {
   const [showPricing, setShowPricing] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   
-  const [activeTab, setActiveTab] = useState<'home' | 'gems' | 'qa' | 'lessons'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'gems' | 'qa' | 'lessons' | 'saved' | 'profile'>('home');
   const [input, setInput] = useState('');
   const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
   const [lessonContent, setLessonContent] = useState<string | null>(null);
@@ -257,6 +259,7 @@ export default function App() {
               input={input} 
               setInput={setInput} 
               onSendMessage={handleSendMessage} 
+              userId={session?.user?.id}
             />
           )}
 
@@ -268,16 +271,27 @@ export default function App() {
               loadLesson={loadLesson} 
               isLoadingLesson={isLoadingLesson} 
               lessonContent={lessonContent} 
+              userId={session?.user?.id}
             />
+          )}
+
+          {activeTab === 'saved' && (
+            <SavedView userId={session?.user?.id} />
+          )}
+
+          {activeTab === 'profile' && (
+            <ProfileView session={session} onSignOut={() => supabase.auth.signOut()} />
           )}
         </main>
 
-        {/* Navegación */}
-        <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-[500px] bg-white/95 backdrop-blur-xl border border-stone-100 shadow-2xl flex justify-around items-center py-4 px-6 z-[100] rounded-[3rem]">
-          <NavBtn active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={<Home size={22}/>} label="Inicio" />
-          <NavBtn active={activeTab === 'gems'} onClick={() => setActiveTab('gems')} icon={<GemaIcon size={22}/>} label="Gema" />
-          <NavBtn active={activeTab === 'qa'} onClick={() => setActiveTab('qa')} icon={<MessageCircle size={22}/>} label="Guía" />
-          <NavBtn active={activeTab === 'lessons'} onClick={() => setActiveTab('lessons')} icon={<BookOpen size={22}/>} label="Curso" />
+        {/* Navegación - Optimizada para 6 ítems */}
+        <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[95%] max-w-[600px] bg-white/95 backdrop-blur-xl border border-stone-100 shadow-2xl flex justify-around items-center py-4 px-2 z-[100] rounded-[3rem]">
+          <NavBtn active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={<Home size={20}/>} label="Inicio" />
+          <NavBtn active={activeTab === 'gems'} onClick={() => setActiveTab('gems')} icon={<GemaIcon size={20}/>} label="Gema" />
+          <NavBtn active={activeTab === 'qa'} onClick={() => setActiveTab('qa')} icon={<MessageCircle size={20}/>} label="Guía" />
+          <NavBtn active={activeTab === 'saved'} onClick={() => setActiveTab('saved')} icon={<Heart size={20}/>} label="Guardado" />
+          <NavBtn active={activeTab === 'lessons'} onClick={() => setActiveTab('lessons')} icon={<BookOpen size={20}/>} label="Curso" />
+          <NavBtn active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} icon={<User size={20}/>} label="Perfil" />
         </nav>
 
         {showPricing && (

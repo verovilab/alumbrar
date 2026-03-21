@@ -1,6 +1,7 @@
 import React from 'react';
-import { ChevronLeft, RefreshCw } from 'lucide-react';
+import { ChevronLeft, RefreshCw, Bookmark, Share2 } from 'lucide-react';
 import { FormattedText } from './FormattedText';
+import { supabase } from '../lib/supabase';
 
 interface LessonsViewProps {
   selectedLesson: number | null;
@@ -9,6 +10,7 @@ interface LessonsViewProps {
   loadLesson: (num: number) => void;
   isLoadingLesson: boolean;
   lessonContent: string | null;
+  userId?: string;
 }
 
 export function LessonsView({ 
@@ -17,8 +19,36 @@ export function LessonsView({
   dayOfYear, 
   loadLesson, 
   isLoadingLesson, 
-  lessonContent 
+  lessonContent,
+  userId
 }: LessonsViewProps) {
+  const saveSnippet = async () => {
+    if (!userId || !lessonContent) return;
+    try {
+      await supabase.from('user_snippets').insert({
+        user_id: userId,
+        content: lessonContent.substring(0, 500) + (lessonContent.length > 500 ? '...' : ''),
+        source: `Lección ${selectedLesson}`
+      });
+      alert('Lección guardada en tus tesoros ✨');
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleShare = async () => {
+    if (navigator.share && lessonContent) {
+      try {
+        await navigator.share({
+          title: `Lección ${selectedLesson} - Alumbrar`,
+          text: `Te comparto la Lección ${selectedLesson} de Un Curso de Milagros desde Alumbrar.com.ar. \n\n"${lessonContent.substring(0, 200)}..."`,
+          url: 'https://alumbrar.com.ar',
+        });
+      } catch (err) {
+        console.log('Error sharing', err);
+      }
+    }
+  };
   return (
     <div className="animate-fade-up">
       {!selectedLesson ? (
