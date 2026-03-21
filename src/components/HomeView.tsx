@@ -6,15 +6,18 @@ interface HomeViewProps {
   onLoadLesson: (num: number) => void;
   onSetTab: (tab: 'home' | 'gems' | 'qa' | 'lessons') => void;
   categories: string[];
+  currentGema: any;
 }
 
-export function HomeView({ dayOfYear, onLoadLesson, onSetTab, categories }: HomeViewProps) {
+export function HomeView({ dayOfYear, onLoadLesson, onSetTab, categories, currentGema }: HomeViewProps) {
+  const quote = currentGema?.phrase || "Nada real puede ser amenazado. Nada irreal existe.";
+  
   return (
     <div className="space-y-8 animate-fade-up">
       <div className="bg-stone-900 rounded-[2.5rem] p-10 text-white shadow-xl relative overflow-hidden group">
         <div className="absolute -right-4 -top-4 w-24 h-24 bg-[#D4AF37]/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
         <Wind className="text-[#D4AF37] mb-6" size={24} />
-        <h2 className="text-xl font-serif italic leading-relaxed">"Nada real puede ser amenazado. Nada irreal existe."</h2>
+        <h2 className="text-xl font-serif italic leading-relaxed">"{quote}"</h2>
         <div className="mt-6 flex items-center gap-3">
           <span className="text-[8px] uppercase tracking-widest text-[#D4AF37] font-black">Tu guía espiritual</span>
           <div className="flex-1 h-[1px] bg-white/10"></div>

@@ -69,11 +69,43 @@ export default function App() {
     return Math.floor(diff / (1000 * 60 * 60 * 24));
   }, []);
 
-  const [currentGema, setCurrentGema] = useState(GEMAS[dayOfYear % GEMAS.length]);
+  const [currentGema, setCurrentGema] = useState<any>(null);
 
-  const handleNextGema = () => {
-    const randomIndex = Math.floor(Math.random() * GEMAS.length);
-    setCurrentGema(GEMAS[randomIndex]);
+  // Cargar Gema Diaria al iniciar
+  useEffect(() => {
+    fetchDailyGema();
+  }, []);
+
+  const fetchDailyGema = async () => {
+    const { data } = await supabase
+      .from('gems')
+      .select('*')
+      .eq('is_daily', true)
+      .limit(1)
+      .single();
+    
+    if (data) {
+      setCurrentGema(data);
+    } else {
+      // Fallback a estático si no hay en DB
+      setCurrentGema(GEMAS[dayOfYear % GEMAS.length]);
+    }
+  };
+
+  const handleNextGema = async () => {
+    // Intentar traer una aleatoria de la DB
+    const { data } = await supabase
+      .from('gems')
+      .select('*')
+      .limit(100); // Traemos un pool
+    
+    if (data && data.length > 0) {
+      const random = data[Math.floor(Math.random() * data.length)];
+      setCurrentGema(random);
+    } else {
+      const randomIndex = Math.floor(Math.random() * GEMAS.length);
+      setCurrentGema(GEMAS[randomIndex]);
+    }
   };
 
   const handleSendMessage = async () => {
@@ -96,7 +128,22 @@ export default function App() {
     setLessonContent(null);
     setIsLoadingLesson(true);
     setActiveTab('lessons');
+    
     try {
+      // 1. Intentar cargar desde Supabase (Contenido Estático)
+      const { data: dbLesson, error: dbError } = await supabase
+        .from('lessons')
+        .select('title, content')
+        .eq('number', num)
+        .single();
+
+      if (dbLesson && !dbError) {
+        setLessonContent(dbLesson.content);
+        return;
+      }
+
+      // 2. Fallback: Inteligencia Artificial (Gemini 2.5)
+      console.log("Lesson not in DB, falling back to AI...");
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
       const prompt = `Actúa como un maestro experto en Un Curso de Milagros. Pero no hables como si fueras un guia sino sólo trasnmite información. Proporciona un resumen inspirador y profundo de la Lección ${num}. Estructúralo con: 1. El concepto central. 2. Una explicación para la vida diaria. 3. Una práctica concreta para hoy.`;
@@ -105,8 +152,8 @@ export default function App() {
       const response = await result.response;
       setLessonContent(response.text() || "La Verdad espera tu reconocimiento silencioso.");
     } catch (e: any) {
-      console.error("Gemini Lesson Error:", e);
-      setLessonContent(`Error: ${e.message || "Hubo un problema al cargar la lección. Verifica tu conexión o API_KEY."}`);
+      console.error("Lesson Loading Error:", e);
+      setLessonContent(`Disculpa, hubo un problema al sintonizar la lección. ${e.message || ""}`);
     } finally {
       setIsLoadingLesson(false);
     }
@@ -153,7 +200,8 @@ export default function App() {
               dayOfYear={dayOfYear} 
               onLoadLesson={loadLesson} 
               onSetTab={setActiveTab} 
-              categories={categories} 
+              categories={categories}
+              currentGema={currentGema}
             />
           )}
 

@@ -86,21 +86,27 @@ export function GemaView({ currentGema, onNextGema, userId }: GemaViewProps) {
         <p className="text-xl font-serif italic text-stone-900 leading-snug">"{currentGema.phrase}"</p>
         
         <div className="space-y-8">
-          <div>
-            <span className="text-[9px] font-black uppercase tracking-widest text-[#D4AF37] block mb-2">Idea Guía</span>
-            <p className="text-sm text-stone-600 leading-relaxed">{currentGema.idea}</p>
-          </div>
-          <div className="bg-stone-50 p-6 rounded-2xl border border-stone-100">
-            <div className="flex items-center gap-2 mb-2">
-              <Zap size={14} className="text-[#D4AF37]" />
-              <span className="text-[9px] font-black uppercase tracking-widest text-stone-900">Microacción (30-120s)</span>
+          {currentGema.idea && (
+            <div>
+              <span className="text-[9px] font-black uppercase tracking-widest text-[#D4AF37] block mb-2">Idea Guía</span>
+              <p className="text-sm text-stone-600 leading-relaxed">{currentGema.idea}</p>
             </div>
-            <p className="text-sm text-stone-700 font-medium">{currentGema.action}</p>
-          </div>
-          <div className="pt-4 border-t border-stone-50">
-            <span className="text-[9px] font-black uppercase tracking-widest text-stone-300 block mb-1">Mantra</span>
-            <p className="text-xs font-serif italic text-stone-400">"{currentGema.mantra}"</p>
-          </div>
+          )}
+          {currentGema.action && (
+            <div className="bg-stone-50 p-6 rounded-2xl border border-stone-100">
+              <div className="flex items-center gap-2 mb-2">
+                <Zap size={14} className="text-[#D4AF37]" />
+                <span className="text-[9px] font-black uppercase tracking-widest text-stone-900">Microacción (30-120s)</span>
+              </div>
+              <p className="text-sm text-stone-700 font-medium">{currentGema.action}</p>
+            </div>
+          )}
+          {currentGema.mantra && (
+            <div className="pt-4 border-t border-stone-50">
+              <span className="text-[9px] font-black uppercase tracking-widest text-stone-300 block mb-1">Mantra</span>
+              <p className="text-xs font-serif italic text-stone-400">"{currentGema.mantra}"</p>
+            </div>
+          )}
         </div>
       </div>
 
