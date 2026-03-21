@@ -6,25 +6,19 @@ const TRACKS = [
     id: 'bowls', 
     name: 'Cuencos Tibetanos', 
     icon: <Bell size={14} />, 
-    url: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Tibetan_Singing_Bowl_-_1.mp3' 
+    url: 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/piano-mp3.mp3' 
   },
   { 
     id: 'water', 
     name: 'Aguas de Paz', 
     icon: <Waves size={14} />, 
-    url: 'https://upload.wikimedia.org/wikipedia/commons/c/c8/River_flow_sounds.mp3'
+    url: 'https://www.soundjay.com/buttons/beep-01a.mp3'
   },
   { 
     id: 'zen', 
     name: 'Música Zen', 
     icon: <Music size={14} />, 
-    url: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Bells_and_birds.mp3'
-  },
-  {
-    id: 'test',
-    name: 'Diagnóstico',
-    icon: <Bell size={14} />,
-    url: 'https://www.soundjay.com/buttons/beep-01a.mp3'
+    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
   }
 ];
 
@@ -42,7 +36,6 @@ export function ZenPlayer() {
     if (!audioObj.current) {
       audioObj.current = new Audio();
       audioObj.current.loop = true;
-      audioObj.current.crossOrigin = "anonymous";
     }
 
     // Cargar preferencia
