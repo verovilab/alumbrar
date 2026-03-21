@@ -25,7 +25,11 @@ CREATE TABLE IF NOT EXISTS public.gems (
 ALTER TABLE public.lessons ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.gems ENABLE ROW LEVEL SECURITY;
 
--- Políticas: Todos pueden leer. Solo autenticados/anon pueden escribir (Si quieres habilitar auto-sincronización)
+-- Políticas: Limpiar e instalar
+DROP POLICY IF EXISTS "Allow public read access on lessons" ON public.lessons;
+DROP POLICY IF EXISTS "Allow public read access on gems" ON public.gems;
+DROP POLICY IF EXISTS "Allow public insert/update on lessons" ON public.lessons;
+
 CREATE POLICY "Allow public read access on lessons" ON public.lessons FOR SELECT USING (true);
 CREATE POLICY "Allow public read access on gems" ON public.gems FOR SELECT USING (true);
 
