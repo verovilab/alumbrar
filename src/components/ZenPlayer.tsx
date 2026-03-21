@@ -6,19 +6,19 @@ const TRACKS = [
     id: 'bowls', 
     name: 'Cuencos Tibetanos', 
     icon: <Bell size={14} />, 
-    url: 'https://www.chosic.com/wp-content/uploads/2021/04/Tibetan-Singing-Bowls.mp3' 
+    url: 'https://archive.org/download/meditation-bowl-sounds/meditation-bowl-1.mp3' 
   },
   { 
     id: 'water', 
     name: 'Aguas de Paz', 
     icon: <Waves size={14} />, 
-    url: 'https://www.chosic.com/wp-content/uploads/2021/05/River-Nature-Sounds.mp3' 
+    url: 'https://archive.org/download/relaxing-nature-sounds-bubbles/relaxing-nature-sounds-bubbles.mp3' 
   },
   { 
     id: 'zen', 
     name: 'Música Zen', 
     icon: <Music size={14} />, 
-    url: 'https://www.chosic.com/wp-content/uploads/2021/04/Spirit-of-the-Night.mp3' 
+    url: 'https://archive.org/download/zen-meditation-music-11441/zen-meditation-music-11441.mp3' 
   }
 ];
 
@@ -62,27 +62,33 @@ export function ZenPlayer() {
       audioRef.current.volume = volume;
       audioRef.current.loop = true;
       
-      if (isPlaying) {
-        // Forzar recarga si el src cambió
-        if (audioRef.current.src !== currentTrack.url) {
-          audioRef.current.src = currentTrack.url;
-          audioRef.current.load();
-        }
-        audioRef.current.play().catch(e => {
-          console.log("Audio play error (likely browser policy):", e);
-          // Si falla por política de reproducción, pausamos para que el usuario deba darle play manualmente
+      const playAudio = async () => {
+        try {
+          // Si el src cambió o no está seteado
+          if (audioRef.current && audioRef.current.src !== currentTrack.url) {
+            audioRef.current.src = currentTrack.url;
+            audioRef.current.load();
+          }
+          
+          if (isPlaying && audioRef.current) {
+            await audioRef.current.play();
+          } else if (audioRef.current) {
+            audioRef.current.pause();
+          }
+        } catch (e) {
+          console.log("Audio playback blocked or failed:", e);
           setIsPlaying(false);
-        });
-      } else {
-        audioRef.current.pause();
-      }
+        }
+      };
+
+      playAudio();
     }
     
     // Guardar preferencia
     localStorage.setItem('zen_audio_pref', JSON.stringify({ 
       trackIndex: currentTrackIndex, 
       volume, 
-      isPlaying // Para saber si estaba sonando en HomeView
+      isPlaying 
     }));
   }, [isPlaying, currentTrackIndex, volume]);
 
