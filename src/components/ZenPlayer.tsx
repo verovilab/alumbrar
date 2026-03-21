@@ -16,9 +16,15 @@ const TRACKS = [
   },
   { 
     id: 'zen', 
-    name: 'Música Zen', 
+    name: 'Santuario Zen', 
     icon: <Music size={14} />, 
-    url: '/audio/zen.mp3'
+    url: '/audio/sanctuary.mp3'
+  },
+  { 
+    id: 'piano', 
+    name: 'Piano de Luz', 
+    icon: <Music size={14} />, 
+    url: '/audio/piano.mp3'
   }
 ];
 
