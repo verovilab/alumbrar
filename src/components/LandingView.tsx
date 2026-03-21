@@ -1,0 +1,70 @@
+import React from 'react';
+import { Wind, BookOpen, Star, MessageCircle, ArrowRight } from 'lucide-react';
+
+interface LandingViewProps {
+  onShowAuth: () => void;
+}
+
+export function LandingView({ onShowAuth }: LandingViewProps) {
+  return (
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center font-sans antialiased text-stone-900 selection:bg-[#D4AF37]/20 pt-12 md:pt-20">
+      {/* Hero Section */}
+      <div className="w-full max-w-5xl px-6 pt-12 pb-16 flex flex-col items-center text-center space-y-8 animate-fade-in">
+        <div className="w-20 h-20 rounded-full bg-slate-900 flex items-center justify-center shadow-2xl mb-4 border border-slate-800">
+           <img src="/favicon.png" alt="Logo" className="w-9/12 h-9/12 object-contain rounded-full" />
+        </div>
+        <h1 className="text-5xl md:text-7xl font-serif font-bold tracking-tight text-slate-900">Alumbrar</h1>
+        <p className="text-lg md:text-xl text-stone-500 max-w-2xl font-medium leading-relaxed">
+          Un espacio de quietud diseñado para acompañar tu estudio de <span className="text-stone-900 italic font-serif">Un Curso de Milagros</span>.
+        </p>
+        <button 
+          onClick={onShowAuth}
+          className="px-10 py-5 bg-slate-900 text-[#D4AF37] rounded-3xl font-black uppercase tracking-widest text-sm shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-4 group"
+        >
+          Comenzar mi viaje <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+        </button>
+      </div>
+
+      {/* Features Grid */}
+      <div className="w-full max-w-5xl px-6 py-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-stone-100 space-y-4 hover:shadow-xl transition-all">
+          <BookOpen className="text-[#D4AF37]" size={32} />
+          <h3 className="text-xl font-bold font-serif">Lecciones Diarias</h3>
+          <p className="text-sm text-stone-400 leading-relaxed">Accede al resumen y práctica de la lección que te corresponde hoy de forma instantánea.</p>
+        </div>
+        <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-stone-100 space-y-4 hover:shadow-xl transition-all">
+          <Star className="text-[#D4AF37]" size={32} />
+          <h3 className="text-xl font-bold font-serif">Gemas de Sabiduría</h3>
+          <p className="text-sm text-stone-400 leading-relaxed">Inspiraciones aleatorias y temáticas para elevar tu vibración en momentos de duda.</p>
+        </div>
+        <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-stone-100 space-y-4 hover:shadow-xl transition-all">
+          <MessageCircle className="text-[#D4AF37]" size={32} />
+          <h3 className="text-xl font-bold font-serif">Guía Espiritual IA</h3>
+          <p className="text-sm text-stone-400 leading-relaxed">Un chat inteligente entrenado en la profundidad del Curso para despejar tus dudas.</p>
+        </div>
+      </div>
+
+      {/* Quote Preview */}
+      <div className="w-full max-w-2xl px-6 py-16 text-center italic space-y-6">
+        <Wind className="mx-auto text-stone-200" size={40} />
+        <h2 className="text-2xl md:text-3xl font-serif text-stone-600 leading-relaxed">
+          "Nada real puede ser amenazado. Nada irreal existe. En esto radica la paz de Dios."
+        </h2>
+      </div>
+
+      {/* Footer Público (Google Requirement) */}
+      <footer className="w-full max-w-5xl px-6 py-16 mt-auto border-t border-stone-100 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
+        <div className="space-y-2">
+          <p className="text-sm font-bold text-slate-900">Alumbrar | Un Espacio de Quietud</p>
+          <p className="text-xs text-stone-400 max-w-sm">
+            Diseñado para la paz interior. Basado en <em>Un Curso de Milagros</em>.
+          </p>
+        </div>
+        <div className="flex gap-8">
+          <a href="/privacy.html" className="text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-[#D4AF37] transition-colors">Privacidad</a>
+          <a href="/terms.html" className="text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-[#D4AF37] transition-colors">Términos</a>
+        </div>
+      </footer>
+    </div>
+  );
+}

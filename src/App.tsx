@@ -12,6 +12,7 @@ import { GemaView } from './components/GemaView';
 import { ChatView } from './components/ChatView';
 import { LessonsView } from './components/LessonsView';
 import { Auth } from './components/Auth';
+import { LandingView } from './components/LandingView';
 
 // Hooks & Data
 import { GEMAS } from './data/gemas';
@@ -25,6 +26,7 @@ export default function App() {
   const [isPremium, setIsPremium] = useState(false);
   const [msgCount, setMsgCount] = useState(0);
   const [showPricing, setShowPricing] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
   
   const [activeTab, setActiveTab] = useState<'home' | 'gems' | 'qa' | 'lessons'>('home');
   const [input, setInput] = useState('');
@@ -181,7 +183,10 @@ export default function App() {
   const categories = ["Calma", "Perdón", "Percepción", "Confianza", "Relaciones", "Presencia"];
 
   if (!session) {
-    return <Auth />;
+    if (showAuth) {
+      return <Auth />;
+    }
+    return <LandingView onShowAuth={() => setShowAuth(true)} />;
   }
 
   return (
@@ -195,8 +200,8 @@ export default function App() {
               <img src="/favicon.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
             <div className="cursor-pointer" onClick={() => setActiveTab('home')}>
-              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900 tracking-tight">Camino a UCDM</h1>
-              <p className="text-[10px] uppercase tracking-[0.4em] text-stone-400 font-bold">Luz & Verdad</p>
+              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900 tracking-tight">Alumbrar</h1>
+              <p className="text-[10px] uppercase tracking-[0.4em] text-stone-400 font-black">Un Espacio de Quietud</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
