@@ -123,6 +123,17 @@ export function Auth() {
             {isSignUp ? 'Inicia Sesión' : 'Crea una cuenta'}
           </button>
         </p>
+
+        {/* Footer Público (Requisito Google Verification) */}
+        <div className="pt-8 border-t border-stone-50 space-y-4">
+          <p className="text-[10px] text-stone-400 leading-relaxed text-center italic">
+            Alumbrar es un espacio de quietud y estudio guiado basado en las enseñanzas de Un Curso de Milagros.
+          </p>
+          <div className="flex justify-center gap-6">
+            <a href="/privacy.html" className="text-[10px] font-bold text-stone-300 hover:text-[#D4AF37] transition-colors uppercase tracking-widest">Privacidad</a>
+            <a href="/terms.html" className="text-[10px] font-bold text-stone-300 hover:text-[#D4AF37] transition-colors uppercase tracking-widest">Términos</a>
+          </div>
+        </div>
       </div>
     </div>
   );
