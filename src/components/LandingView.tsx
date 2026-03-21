@@ -60,9 +60,10 @@ export function LandingView({ onShowAuth }: LandingViewProps) {
             Diseñado para la paz interior. Basado en <em>Un Curso de Milagros</em>.
           </p>
         </div>
-        <div className="flex gap-8">
+        <div className="flex gap-8 items-center">
           <a href="/privacy.html" className="text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-[#D4AF37] transition-colors">Privacidad</a>
           <a href="/terms.html" className="text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-[#D4AF37] transition-colors">Términos</a>
+          <a href="https://tristanlohengrin.bandcamp.com/" target="_blank" rel="noopener noreferrer" className="text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-[#D4AF37] transition-colors">Música: CC BY</a>
         </div>
       </footer>
     </div>
