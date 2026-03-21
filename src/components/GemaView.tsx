@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Repeat, Quote, Zap, Heart } from 'lucide-react';
+import { Repeat, Quote, Zap, Heart, Share2 } from 'lucide-react';
 import { GemaIcon } from './GemaIcon';
 import { Gema } from '../data/gemas';
 import { supabase } from '../lib/supabase';
@@ -30,6 +30,20 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
       .single();
     
     setIsFavorite(!!data);
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Gema de Sabiduría - Alumbrar',
+          text: `"${currentGema.phrase}" \n\nTe comparto esto desde mi app Alumbrar.com.ar que creo te puede interesar.`,
+          url: 'https://alumbrar.com.ar',
+        });
+      } catch (err) {
+        console.log('Error sharing', err);
+      }
+    }
   };
 
   const toggleFavorite = async () => {

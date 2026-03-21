@@ -75,9 +75,25 @@ export function LessonsView({
             <ChevronLeft size={14} /> Volver al Índice
           </button>
           <div className="bg-white p-10 rounded-[2.5rem] border border-stone-50 shadow-lg min-h-[400px]">
-            <div className="mb-6">
-              <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#D4AF37] block mb-1">Un Curso de Milagros</span>
-              <h3 className="text-2xl font-serif font-bold text-stone-900 italic">Lección {selectedLesson}</h3>
+            <div className="mb-6 flex justify-between items-start">
+              <div>
+                <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#D4AF37] block mb-1">Un Curso de Milagros</span>
+                <h3 className="text-2xl font-serif font-bold text-stone-900 italic">Lección {selectedLesson}</h3>
+              </div>
+              <div className="flex gap-2">
+                <button 
+                  onClick={handleShare}
+                  className="p-3 bg-stone-50 rounded-full text-stone-300 hover:text-stone-900 transition-colors"
+                >
+                  <Share2 size={16} />
+                </button>
+                <button 
+                  onClick={saveSnippet}
+                  className="p-3 bg-stone-50 rounded-full text-stone-300 hover:text-stone-900 transition-colors"
+                >
+                  <Bookmark size={16} />
+                </button>
+              </div>
             </div>
             {isLoadingLesson ? (
               <div className="py-20 flex flex-col items-center gap-4 text-stone-200">
