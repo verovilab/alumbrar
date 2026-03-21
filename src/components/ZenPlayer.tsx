@@ -139,7 +139,7 @@ export function ZenPlayer() {
       <div className={`glass-dark rounded-2xl overflow-hidden shadow-2xl border border-white/10 flex flex-col transition-all duration-500`}>
         
         {/* Expanded Controls */}
-        <div className={`transition-all duration-500 ${isExpanded ? 'h-40 p-4 opacity-100' : 'h-0 opacity-0 overflow-hidden'}`}>
+        <div className={`transition-all duration-500 overflow-hidden ${isExpanded ? 'max-h-56 p-4 opacity-100' : 'max-h-0 opacity-0'}`}>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-[9px] font-black uppercase tracking-widest text-[#D4AF37] truncate w-24">
