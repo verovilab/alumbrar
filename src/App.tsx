@@ -155,13 +155,20 @@ export default function App() {
       setLessonContent(fullContent);
 
       // 3. Auto-llenado: Guardar en la DB para la próxima vez
-      await supabase
+      console.log(`Saving Lesson ${num} to DB...`);
+      const { error: upsertError } = await supabase
         .from('lessons')
         .upsert({ 
           number: num, 
           title: `Lección ${num}`, 
           content: fullContent 
         }, { onConflict: 'number' });
+
+      if (upsertError) {
+        console.error("Supabase SAVE Error (RLS?):", upsertError);
+      } else {
+        console.log(`Lesson ${num} SAVED successfully!`);
+      }
 
     } catch (e: any) {
       console.error("Lesson Error:", e);
