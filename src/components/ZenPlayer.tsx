@@ -42,6 +42,20 @@ export function ZenPlayer() {
   }, []);
 
   useEffect(() => {
+    const handleToggle = (e: any) => {
+      if (e.detail.action === 'play') {
+        setIsPlaying(true);
+        setIsExpanded(true);
+      } else if (e.detail.action === 'stop') {
+        setIsPlaying(false);
+      }
+    };
+
+    window.addEventListener('toggle-zen-audio', handleToggle);
+    return () => window.removeEventListener('toggle-zen-audio', handleToggle);
+  }, []);
+
+  useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
       audioRef.current.loop = true;
