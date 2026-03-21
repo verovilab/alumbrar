@@ -98,7 +98,7 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
           >
             <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
           </button>
-          <button onClick={onNextGema} className="p-3 bg-stone-50 rounded-full text-stone-400 hover:text-stone-900 transition-colors">
+          <button onClick={() => onNextGema()} className="p-3 bg-stone-50 rounded-full text-stone-400 hover:text-stone-900 transition-colors">
             <Repeat size={18} />
           </button>
         </div>
