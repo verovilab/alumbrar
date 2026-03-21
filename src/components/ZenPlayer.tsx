@@ -55,10 +55,16 @@ export function ZenPlayer() {
       } catch (e) {}
     }
 
-    const handleToggle = (e: any) => {
+    const handleToggle = async (e: any) => {
       if (e.detail.action === 'play') {
-        setIsPlaying(true);
         setIsExpanded(true);
+        // Usar la preferencia guardada o el default
+        const saved = localStorage.getItem('zen_audio_pref');
+        let index = currentTrackIndex;
+        if (saved) {
+          try { index = JSON.parse(saved).trackIndex || 0; } catch(e) {}
+        }
+        await playTrack(index);
       }
     };
 
@@ -72,49 +78,62 @@ export function ZenPlayer() {
     };
   }, []);
 
-  // Actualizar volumen
+  // Manejar cambio de volumen directamente
   useEffect(() => {
     if (audioObj.current) {
       audioObj.current.volume = volume;
     }
   }, [volume]);
 
-  // Manejar cambio de Pista y Play/Pause
+  // Sincronizar estado inicial y persistencia
   useEffect(() => {
-    const playLogic = async () => {
-      if (!audioObj.current) return;
-
-      if (isPlaying) {
-        // Si la URL cambió, cargamos la nueva
-        const currentSrc = audioObj.current.src;
-        // Normalizar URL para comparación
-        if (currentSrc !== currentTrack.url) {
-          audioObj.current.src = currentTrack.url;
-          audioObj.current.load();
-        }
-        
-        try {
-          await audioObj.current.play();
-        } catch (e) {
-          console.error("Audio error:", e);
-          setIsPlaying(false);
-        }
-      } else {
-        audioObj.current.pause();
-      }
-    };
-
-    playLogic();
-
     localStorage.setItem('zen_audio_pref', JSON.stringify({ 
       trackIndex: currentTrackIndex, 
       volume, 
       isPlaying 
     }));
-  }, [isPlaying, currentTrackIndex]);
+  }, [isPlaying, currentTrackIndex, volume]);
 
-  const togglePlay = () => setIsPlaying(!isPlaying);
-  const nextTrack = () => setCurrentTrackIndex((prev) => (prev + 1) % TRACKS.length);
+  const playTrack = async (index: number) => {
+    if (!audioObj.current) return;
+    const track = TRACKS[index];
+    
+    try {
+      // Siempre recargar si cambiamos de pista o si el src está vacío
+      if (audioObj.current.src !== track.url) {
+        audioObj.current.src = track.url;
+        audioObj.current.load();
+      }
+      await audioObj.current.play();
+      setIsPlaying(true);
+    } catch (e) {
+      console.error("Error playing track:", e);
+      setIsPlaying(false);
+    }
+  };
+
+  const togglePlay = async () => {
+    if (!audioObj.current) return;
+    
+    if (isPlaying) {
+      audioObj.current.pause();
+      setIsPlaying(false);
+    } else {
+      await playTrack(currentTrackIndex);
+    }
+  };
+
+  const handleSelectTrack = async (index: number) => {
+    setCurrentTrackIndex(index);
+    if (isPlaying || !isPlaying) { // Forzar play al seleccionar nueva
+      await playTrack(index);
+    }
+  };
+
+  const nextTrack = () => {
+    const nextIndex = (currentTrackIndex + 1) % TRACKS.length;
+    handleSelectTrack(nextIndex);
+  };
 
   return (
     <div className={`fixed bottom-24 right-6 z-50 transition-all duration-500 ease-[cubic-bezier(0.23, 1, 0.32, 1)] ${isExpanded ? 'w-48' : 'w-12'}`}>
@@ -146,7 +165,7 @@ export function ZenPlayer() {
               {TRACKS.map((t, i) => (
                 <button 
                   key={t.id} 
-                  onClick={() => setCurrentTrackIndex(i)}
+                  onClick={() => handleSelectTrack(i)}
                   className={`p-2 rounded-xl transition-all ${currentTrackIndex === i ? 'bg-[#D4AF37] text-white' : 'text-white/40 hover:bg-white/5'}`}
                 >
                   {t.icon}
