@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
-  Home, Star, BookOpen, MessageCircle, RefreshCw, LogOut
+  Home, Diamond, BookOpen, MessageCircle, RefreshCw, LogOut
 } from 'lucide-react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { supabase } from './lib/supabase';
@@ -94,19 +94,26 @@ export default function App() {
     }
   };
 
-  const handleNextGema = async () => {
-    // Intentar traer una aleatoria de la DB
-    const { data } = await supabase
-      .from('gems')
-      .select('*')
-      .limit(100); // Traemos un pool
+  const handleNextGema = async (category?: string) => {
+    // Intentar traer una con filtro de la DB si se pasa categoría
+    let query = supabase.from('gems').select('*');
+    if (category) {
+      query = query.eq('category', category);
+    }
+    
+    const { data } = await query.limit(100);
     
     if (data && data.length > 0) {
       const random = data[Math.floor(Math.random() * data.length)];
       setCurrentGema(random);
     } else {
-      const randomIndex = Math.floor(Math.random() * GEMAS.length);
-      setCurrentGema(GEMAS[randomIndex]);
+      // Fallback a locales
+      let filtered = GEMAS;
+      if (category) {
+        filtered = GEMAS.filter(g => g.category === category);
+      }
+      const randomIndex = Math.floor(Math.random() * filtered.length);
+      setCurrentGema(filtered[randomIndex]);
     }
   };
 
@@ -229,7 +236,6 @@ export default function App() {
               dayOfYear={dayOfYear} 
               onLoadLesson={loadLesson} 
               onSetTab={setActiveTab} 
-              categories={categories}
               currentGema={currentGema}
             />
           )}
@@ -239,6 +245,7 @@ export default function App() {
               currentGema={currentGema} 
               onNextGema={handleNextGema} 
               userId={session?.user?.id}
+              categories={categories}
             />
           )}
 
@@ -267,7 +274,7 @@ export default function App() {
         {/* Navegación */}
         <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-[500px] bg-white/95 backdrop-blur-xl border border-stone-100 shadow-2xl flex justify-around items-center py-4 px-6 z-[100] rounded-[3rem]">
           <NavBtn active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={<Home size={22}/>} label="Inicio" />
-          <NavBtn active={activeTab === 'gems'} onClick={() => setActiveTab('gems')} icon={<Star size={22}/>} label="Gema" />
+          <NavBtn active={activeTab === 'gems'} onClick={() => setActiveTab('gems')} icon={<Diamond size={22}/>} label="Gema" />
           <NavBtn active={activeTab === 'qa'} onClick={() => setActiveTab('qa')} icon={<MessageCircle size={22}/>} label="Guía" />
           <NavBtn active={activeTab === 'lessons'} onClick={() => setActiveTab('lessons')} icon={<BookOpen size={22}/>} label="Curso" />
         </nav>

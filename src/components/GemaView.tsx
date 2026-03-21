@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Repeat, Quote, Zap, Heart } from 'lucide-react';
+import { Diamond, Repeat, Quote, Zap, Heart } from 'lucide-react';
 import { Gema } from '../data/gemas';
 import { supabase } from '../lib/supabase';
 
 interface GemaViewProps {
   currentGema: Gema;
-  onNextGema: () => void;
+  onNextGema: (category?: string) => void;
   userId?: string;
+  categories: string[];
 }
 
-export function GemaView({ currentGema, onNextGema, userId }: GemaViewProps) {
+export function GemaView({ currentGema, onNextGema, userId, categories }: GemaViewProps) {
   const [isFavorite, setIsFavorite] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -60,12 +61,34 @@ export function GemaView({ currentGema, onNextGema, userId }: GemaViewProps) {
 
   return (
     <div className="space-y-6 animate-fade-up">
+      {/* Selector de Categorías */}
+      <div className="space-y-4 pt-2">
+        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-stone-300">Filtrar por faceta</h4>
+        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+          <button 
+            onClick={() => onNextGema()} 
+            className={`px-5 py-3 rounded-full text-[10px] font-bold transition-all border ${!currentGema.category ? 'bg-stone-900 text-[#D4AF37] border-stone-900' : 'bg-white text-stone-500 border-stone-100 hover:border-stone-200'}`}
+          >
+            Todas
+          </button>
+          {categories.map((cat) => (
+            <button 
+              key={cat} 
+              onClick={() => onNextGema(cat)} 
+              className={`px-5 py-3 rounded-full text-[10px] font-bold transition-all border ${currentGema.category === cat ? 'bg-stone-900 text-[#D4AF37] border-stone-900' : 'bg-white text-stone-500 border-stone-100 hover:border-stone-200'}`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#D4AF37] rounded-full flex items-center justify-center text-white">
-            <Star size={14} />
+          <div className="w-8 h-8 bg-stone-900 rounded-full flex items-center justify-center text-[#D4AF37]">
+            <Diamond size={14} />
           </div>
-          <h3 className="text-lg font-serif font-bold text-stone-900">{currentGema.category}</h3>
+          <h3 className="text-lg font-serif font-bold text-stone-900">{currentGema.category || "Inspiración"}</h3>
         </div>
         <div className="flex items-center gap-2">
           <button 
@@ -110,8 +133,8 @@ export function GemaView({ currentGema, onNextGema, userId }: GemaViewProps) {
         </div>
       </div>
 
-      <button onClick={onNextGema} className="w-full py-5 bg-stone-900 text-[#D4AF37] rounded-full text-xs font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all">
-        Otra Gema
+      <button onClick={() => onNextGema(currentGema.category)} className="w-full py-5 bg-stone-900 text-[#D4AF37] rounded-full text-xs font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all">
+        Otra Gema de {currentGema.category || "Sabiduría"}
       </button>
     </div>
   );

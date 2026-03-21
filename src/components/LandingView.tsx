@@ -1,5 +1,4 @@
-import React from 'react';
-import { Wind, BookOpen, Star, MessageCircle, ArrowRight } from 'lucide-react';
+import { BookOpen, Diamond, MessageCircle, Wind, ArrowRight } from 'lucide-react';
 
 interface LandingViewProps {
   onShowAuth: () => void;
@@ -32,12 +31,12 @@ export function LandingView({ onShowAuth }: LandingViewProps) {
           <h3 className="text-xl font-bold font-serif">Lecciones Diarias</h3>
           <p className="text-sm text-stone-400 leading-relaxed">Accede al resumen y práctica de la lección que te corresponde hoy de forma instantánea.</p>
         </div>
-        <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-stone-100 space-y-4 hover:shadow-xl transition-all">
-          <Star className="text-[#D4AF37]" size={32} />
+        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-stone-100 space-y-3 hover:shadow-xl transition-all">
+          <Diamond className="text-[#D4AF37]" size={32} />
           <h3 className="text-xl font-bold font-serif">Gemas de Sabiduría</h3>
           <p className="text-sm text-stone-400 leading-relaxed">Inspiraciones aleatorias y temáticas para elevar tu vibración en momentos de duda.</p>
         </div>
-        <div className="bg-white p-10 rounded-[3rem] shadow-sm border border-stone-100 space-y-4 hover:shadow-xl transition-all">
+        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-stone-100 space-y-3 hover:shadow-xl transition-all">
           <MessageCircle className="text-[#D4AF37]" size={32} />
           <h3 className="text-xl font-bold font-serif">Guía Espiritual IA</h3>
           <p className="text-sm text-stone-400 leading-relaxed">Un chat inteligente entrenado en la profundidad del Curso para despejar tus dudas.</p>
