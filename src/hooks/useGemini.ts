@@ -84,7 +84,7 @@ export function useGemini(apiKey: string, userId?: string) {
       const model = genAI.getGenerativeModel({ 
         model: 'gemini-1.5-flash',
         systemInstruction: "Eres 'El Guía' de Camino a UCDM. Tu tono es profesional, poético y profundo. Responde siempre basándote en Un Curso de Milagros. Ayuda al usuario a perdonar y encontrar paz."
-      });
+      }, { apiVersion: 'v1' });
 
       const result = await model.generateContent({
         contents: [...currentMessages, newMsg].map(m => ({
