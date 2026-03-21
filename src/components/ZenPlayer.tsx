@@ -2,23 +2,29 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, VolumeX, Music, Waves, Bell, Play, Pause, ChevronUp, ChevronDown } from 'lucide-react';
 
 const TRACKS = [
-  { 
-    id: 'bowls', 
-    name: 'Cuencos Tibetanos', 
-    icon: <Bell size={14} />, 
-    url: '/audio/bowls.mp3' 
+  {
+    id: 'bowls',
+    name: 'Cuencos Tibetanos',
+    icon: <Bell size={14} />,
+    url: '/audio/bowls.mp3'
   },
-  { 
-    id: 'water', 
-    name: 'Aguas de Paz', 
-    icon: <Waves size={14} />, 
+  {
+    id: 'water',
+    name: 'Aguas de Paz',
+    icon: <Waves size={14} />,
     url: '/audio/water.mp3'
   },
-  { 
-    id: 'zen', 
-    name: 'Música Zen', 
-    icon: <Music size={14} />, 
+  {
+    id: 'zen',
+    name: 'Música Zen',
+    icon: <Music size={14} />,
     url: '/audio/zen.mp3'
+  },
+  {
+    id: 'sanctuary',
+    name: 'A Peaceful Sanctuary',
+    icon: <Music size={14} />,
+    url: '/audio/sanctuary.mp3'
   }
 ];
 
@@ -133,7 +139,7 @@ export function ZenPlayer() {
       <div className={`glass-dark rounded-2xl overflow-hidden shadow-2xl border border-white/10 flex flex-col transition-all duration-500`}>
         
         {/* Expanded Controls */}
-        <div className={`transition-all duration-500 ${isExpanded ? 'h-32 p-4 opacity-100' : 'h-0 opacity-0 overflow-hidden'}`}>
+        <div className={`transition-all duration-500 overflow-hidden ${isExpanded ? 'max-h-56 p-4 opacity-100' : 'max-h-0 opacity-0'}`}>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-[9px] font-black uppercase tracking-widest text-[#D4AF37] truncate w-24">
@@ -154,17 +160,25 @@ export function ZenPlayer() {
               className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
             />
             
-            <div className="flex justify-center gap-4">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '4px' }}>
               {TRACKS.map((t, i) => (
-                <button 
-                  key={t.id} 
+                <button
+                  key={t.id}
                   onClick={() => handleSelectTrack(i)}
-                  className={`p-2 rounded-xl transition-all ${currentTrackIndex === i ? 'bg-[#D4AF37] text-white' : 'text-white/40 hover:bg-white/5'}`}
+                  title={t.name}
+                  className={`flex items-center justify-center p-2 rounded-xl transition-all ${currentTrackIndex === i ? 'bg-[#D4AF37] text-white' : 'text-white/40 hover:bg-white/5'}`}
                 >
                   {t.icon}
                 </button>
               ))}
             </div>
+
+            {/* Créditos — requerido por licencia CC BY */}
+            <p className="text-[7px] text-white/20 text-center leading-tight mt-1">
+              <a href="https://tristanlohengrin.bandcamp.com/" target="_blank" rel="noopener noreferrer" className="hover:text-white/40 transition-colors">Tristan Lohengrin</a>
+              {' · '}
+              <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer" className="hover:text-white/40 transition-colors">CC BY 4.0</a>
+            </p>
           </div>
         </div>
 
