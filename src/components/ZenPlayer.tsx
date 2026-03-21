@@ -160,7 +160,7 @@ export function ZenPlayer() {
               className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
             />
             
-            <div className="grid grid-cols-4 gap-1">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '4px' }}>
               {TRACKS.map((t, i) => (
                 <button
                   key={t.id}
