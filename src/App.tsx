@@ -130,29 +130,41 @@ export default function App() {
     setActiveTab('lessons');
     
     try {
-      // 1. Intentar cargar desde Supabase (Contenido Estático)
+      // 1. Intentar cargar desde Supabase
       const { data: dbLesson, error: dbError } = await supabase
         .from('lessons')
-        .select('title, content')
+        .select('content')
         .eq('number', num)
         .single();
 
-      if (dbLesson && !dbError) {
+      // Si el contenido existe y es suficientemente largo (no es un placeholder)
+      if (dbLesson && !dbError && dbLesson.content.length > 300) {
         setLessonContent(dbLesson.content);
         return;
       }
 
-      // 2. Fallback: Inteligencia Artificial (Gemini 2.5)
-      console.log("Lesson not in DB, falling back to AI...");
+      // 2. Generar con IA (Gemini 2.5) si no hay o es muy corto
+      console.log(`Generating/Updating Lesson ${num} with AI...`);
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-      const prompt = `Actúa como un maestro experto en Un Curso de Milagros. Pero no hables como si fueras un guia sino sólo trasnmite información. Proporciona un resumen inspirador y profundo de la Lección ${num}. Estructúralo con: 1. El concepto central. 2. Una explicación para la vida diaria. 3. Una práctica concreta para hoy.`;
+      const prompt = `Actúa como un maestro experto y profundo en Un Curso de Milagros. Proporciona un resumen inspirador de la Lección ${num}. Estructúralo con: 1. El concepto central. 2. Una explicación profunda para la vida diaria. 3. Una práctica concreta para hoy. Usa un tono que transmita paz y verdad. Evita introducciones genéricas, ve directo a la esencia.`;
       
       const result = await model.generateContent(prompt);
-      const response = await result.response;
-      setLessonContent(response.text() || "La Verdad espera tu reconocimiento silencioso.");
+      const fullContent = (await result.response).text() || "La Verdad espera tu reconocimiento silencioso.";
+      
+      setLessonContent(fullContent);
+
+      // 3. Auto-llenado: Guardar en la DB para la próxima vez
+      await supabase
+        .from('lessons')
+        .upsert({ 
+          number: num, 
+          title: `Lección ${num}`, 
+          content: fullContent 
+        }, { onConflict: 'number' });
+
     } catch (e: any) {
-      console.error("Lesson Loading Error:", e);
+      console.error("Lesson Error:", e);
       setLessonContent(`Disculpa, hubo un problema al sintonizar la lección. ${e.message || ""}`);
     } finally {
       setIsLoadingLesson(false);
