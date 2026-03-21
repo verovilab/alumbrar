@@ -44,7 +44,10 @@ CREATE INDEX IF NOT EXISTS idx_gems_category ON public.gems(category);
 -- Datos de ejemplo (Semilla)
 INSERT INTO public.lessons (number, title, content) VALUES
 (1, 'Nada real puede ser amenazado.', 'Esta es la base de todo el curso. El miedo no tiene lugar en la realidad porque la realidad es solo Amor...'),
-(79, 'Permítaseme reconocer el problema para que pueda ser resuelto.', 'El único problema es la separación, y la única solución es el perdón. Reconocer esto ahorra tiempo eterno...');
+(79, 'Permítaseme reconocer el problema para que pueda ser resuelto.', 'El único problema es la separación, y la única solución es el perdón. Reconocer esto ahorra tiempo eterno...')
+ON CONFLICT (number) DO UPDATE SET 
+  title = EXCLUDED.title,
+  content = EXCLUDED.content;
 
 INSERT INTO public.gems (category, phrase, idea, action, mantra, is_daily) VALUES
 ('Calma', 'La paz de Dios es mi único objetivo hoy.', 'Solo la Paz es real.', 'Respira profundamente 3 veces.', 'Paz.', true),
