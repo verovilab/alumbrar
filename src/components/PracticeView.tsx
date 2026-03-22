@@ -299,10 +299,20 @@ Responde estrictamente en formato JSON plano:
               </p>
             </div>
 
-            <div className="mt-10 grid grid-cols-2 md:grid-cols-3 gap-4">
-               <ActionButton icon={<Activity size={16} />} label="Guardar" onClick={handleSave} primary disabled={isSaving} />
-               <ActionButton icon={<Calendar size={16} />} label="Recordatorio" onClick={() => alert('Recordatorio fijado en 4 horas ✨')} />
-               <ActionButton icon={<RefreshCw size={16} />} label="Otra mirada" onClick={handleReceiveGuia} />
+            <div className="mt-10 grid grid-cols-2 gap-4">
+               <ActionButton 
+                 icon={<Activity size={16} />} 
+                 label="Guardar registro" 
+                 onClick={handleSave} 
+                 primary 
+                 disabled={isSaving} 
+               />
+               <ActionButton 
+                 icon={<RefreshCw size={16} />} 
+                 label="Otra mirada" 
+                 onClick={handleReceiveGuia} 
+                 disabled={isGenerating}
+               />
             </div>
           </div>
         </div>
