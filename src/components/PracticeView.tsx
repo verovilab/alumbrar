@@ -35,7 +35,10 @@ export function PracticeView({ userId, dayOfYear, lessonContent }: PracticeViewP
 
   useEffect(() => {
     fetchFeelings();
-  }, []);
+    if (userId) {
+      checkExistingReflection();
+    }
+  }, [userId]);
 
   const fetchFeelings = async () => {
     const { data, error } = await supabase
@@ -43,6 +46,37 @@ export function PracticeView({ userId, dayOfYear, lessonContent }: PracticeViewP
       .select('*')
       .order('sort_order');
     if (data && !error) setFeelings(data);
+  };
+
+  const checkExistingReflection = async () => {
+    if (!userId) return;
+    
+    try {
+      // Usar a fecha de hoy en formato local YYYY-MM-DD para coincidir con la DB
+      const today = new Date().toLocaleDateString('en-CA');
+      
+      const { data, error } = await supabase
+        .from('daily_reflections')
+        .select(`
+          *,
+          feelings (*)
+        `)
+        .eq('user_id', userId)
+        .eq('date', today)
+        .maybeSingle();
+
+      if (data && !error) {
+        setAiResult({
+          reflection: data.reflection_text,
+          practice: data.practice_text
+        });
+        setSelectedFeeling(data.feelings);
+        setUserInput(data.user_input || '');
+        setView('reflection');
+      }
+    } catch (err) {
+      console.error("Error checking existing reflection:", err);
+    }
   };
 
   const extractLessonParts = (content: string | null) => {
@@ -120,14 +154,24 @@ Responde estrictamente en formato JSON plano:
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
-      // Limpiar posible markdown del JSON
-      const jsonStr = text.replace(/```json|```/g, "").trim();
+      
+      // Limpiar posible markdown o ruido del JSON de forma robusta
+      let jsonStr = text;
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        jsonStr = jsonMatch[0];
+      }
+      
       const parsed = JSON.parse(jsonStr);
+      
+      if (!parsed.reflection || !parsed.practice) {
+        throw new Error("Formato JSON incompleto");
+      }
       
       setAiResult(parsed);
       setView('reflection');
     } catch (error) {
-      console.error("AI Error:", error);
+      console.error("AI Error details:", error);
       alert("Hubo un error al conectar con El Guía. Intentá de nuevo.");
     } finally {
       setIsGenerating(false);
