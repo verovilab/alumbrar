@@ -82,7 +82,7 @@ export function useGemini(apiKey: string, userId?: string) {
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ 
-        model: 'gemini-2.5-flash',
+        model: 'gemini-1.5-flash',
         systemInstruction: "Eres 'El Guía' de Camino a UCDM. Tu tono es profesional, poético y profundo. Responde siempre basándote en Un Curso de Milagros. Ayuda al usuario a perdonar y encontrar paz."
       });
 
