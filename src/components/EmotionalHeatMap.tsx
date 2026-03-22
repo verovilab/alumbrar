@@ -81,9 +81,9 @@ export function EmotionalHeatMap({ userId }: { userId?: string }) {
       <div className="flex justify-between items-end mb-6">
          <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">Últimos 35 días</h4>
          <div className="flex gap-4 text-[9px] font-black uppercase tracking-widest text-stone-300">
-            <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-500"></div> Expansivo</div>
-            <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-amber-400"></div> Neutro</div>
-            <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-400"></div> Contractivo</div>
+            <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-expansivo)' }}></div> Expansivo</div>
+            <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-neutro)' }}></div> Neutro</div>
+            <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-contractivo)' }}></div> Contractivo</div>
          </div>
       </div>
 

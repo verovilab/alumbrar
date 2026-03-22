@@ -48,8 +48,17 @@ export function PracticeView({ userId, dayOfYear, lessonContent }: PracticeViewP
 
   const extractConceptoCentral = (content: string | null) => {
     if (!content) return "Cargando sabiduría...";
-    const match = content.match(/\*\*1\. El Concepto Central:\*\*\s*([\s\S]*?)(?:\*\*2\.|$)/);
-    return match ? match[1].trim() : content.substring(0, 300) + "...";
+    
+    // Buscar el bloque que empieza con "1. El Concepto Central" (con o sin negritas o headers)
+    const normalized = content.replace(/[#*]/g, '');
+    const match = content.match(/(?:\*\*|#|)\s*1\.\s*El Concepto Central:?[\s\S]*?(?=(?:\*\*|#|)\s*2\.|$)/i);
+    
+    if (match) {
+      // Limpiar el título del match
+      return match[0].replace(/(?:\*\*|#|)\s*1\.\s*El Concepto Central:?\s*/i, '').trim();
+    }
+    
+    return content.length > 300 ? content.substring(0, 300) + "..." : content;
   };
 
   const handleReceiveGuia = async () => {

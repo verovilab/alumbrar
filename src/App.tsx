@@ -78,9 +78,10 @@ export default function App() {
 
   const [currentGema, setCurrentGema] = useState<any>(null);
 
-  // Cargar Gema Diaria al iniciar
+  // Cargar Gema Diaria y Lección del día al iniciar
   useEffect(() => {
     fetchDailyGema();
+    loadLesson(dayOfYear);
   }, []);
 
   const fetchDailyGema = async () => {
@@ -290,8 +291,8 @@ export default function App() {
           )}
         </main>
 
-        {/* Navegación - Optimizada para 6 ítems */}
-        <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[95%] max-w-[600px] bg-white/95 backdrop-blur-xl border border-stone-100 shadow-2xl flex justify-around items-center py-4 px-2 z-[100] rounded-[3rem]">
+        {/* Navegación - Estándar Bottom Nav */}
+        <nav className="fixed bottom-0 left-0 right-0 w-full bg-white/95 backdrop-blur-xl border-t border-stone-100 shadow-[0_-4px_24px_rgba(0,0,0,0.03)] flex justify-around items-center py-3 px-2 z-[100]">
           <NavBtn active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={<Home size={18}/>} label="Inicio" />
           <NavBtn active={activeTab === 'gems'} onClick={() => setActiveTab('gems')} icon={<GemaIcon size={18}/>} label="Gema" />
           <NavBtn active={activeTab === 'practice'} onClick={() => setActiveTab('practice')} icon={<Activity size={18}/>} label="Práctica" />

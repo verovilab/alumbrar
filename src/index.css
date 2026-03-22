@@ -5,6 +5,28 @@
 :root {
   --font-inter: 'Inter', sans-serif;
   --font-playfair: 'Playfair Display', serif;
+
+  /* Categorías Emocionales */
+  --color-expansivo: #10b981;      /* Verde esmeralda */
+  --color-neutro: #f59e0b;         /* Ámbar/Dorado */
+  --color-contractivo: #ef4444;    /* Rojo coral */
+
+  /* Variaciones para intensidad */
+  --color-muy-expansivo: #059669;  /* Verde más oscuro */
+  --color-muy-contractivo: #dc2626; /* Rojo más oscuro */
+  --color-sin-registro: #f3f4f6;   /* Gris claro */
+
+  /* Fondo y Texto */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-card: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+
+  /* Bordes */
+  --border-light: #e5e7eb;
+  --border-medium: #d1d5db;
 }
 
 body {
