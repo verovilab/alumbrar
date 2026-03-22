@@ -132,10 +132,11 @@ export function EmotionalHeatMap({ userId, showInsights = false }: { userId?: st
       <div>
         <div className="flex justify-between items-end mb-6">
            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">Mapa Emocional (35 días)</h4>
-           <div className="flex gap-4 text-[8px] font-black uppercase tracking-widest text-stone-300">
-              <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-green-500"></div> Exp.</div>
-              <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div> Neu.</div>
-              <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-red-500"></div> Con.</div>
+           <div className="flex flex-wrap gap-x-4 gap-y-2 text-[8px] font-black uppercase tracking-widest text-stone-400 justify-end max-w-[200px]">
+              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-sm bg-green-500 shadow-sm"></div> Exp.</div>
+              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-sm bg-amber-500 shadow-sm"></div> Neu.</div>
+              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-sm bg-red-500 shadow-sm"></div> Con.</div>
+              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-sm bg-white border border-stone-300 shadow-sm"></div> Sin Práctica</div>
            </div>
         </div>
 
@@ -146,10 +147,10 @@ export function EmotionalHeatMap({ userId, showInsights = false }: { userId?: st
           {days.map((day, idx) => (
             <div 
               key={idx}
-              className={`aspect-square rounded-lg flex items-center justify-center transition-all hover:scale-110 shadow-sm border border-stone-100/50 group relative`}
+              className={`aspect-square rounded-lg flex items-center justify-center transition-all hover:scale-110 shadow-sm border ${day.category ? 'border-transparent' : 'border-stone-200'} group relative`}
               style={{ 
                 backgroundColor: day.category ? day.color_hex : '#ffffff',
-                opacity: day.category ? 1 : 0.4
+                opacity: day.category ? 1 : 1 // Full opacity to see the white clearly
               }}
             >
               <span className="text-[10px]">{day.emoji}</span>
