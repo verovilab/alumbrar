@@ -119,7 +119,29 @@ export function PracticeView({ userId, dayOfYear, lessonContent }: PracticeViewP
   const handleReceiveGuia = async () => {
     if (!selectedFeeling || isGenerating) return;
     setIsGenerating(true);
+    
     try {
+      // 1. Intentar buscar reflexión pre-generada en Supabase (Contenido Experto)
+      const { data: preGenerated, error: dbError } = await supabase
+        .from('lesson_reflections')
+        .select('reflection, practice')
+        .eq('lesson_number', dayOfYear)
+        .eq('feeling_id', selectedFeeling.id)
+        .maybeSingle();
+
+      if (preGenerated && !dbError) {
+        console.log("Using pre-generated reflection from expert content...");
+        setAiResult({
+          reflection: preGenerated.reflection,
+          practice: preGenerated.practice
+        });
+        setView('reflection');
+        setIsGenerating(false);
+        return;
+      }
+
+      // 2. Si no hay pre-generada, usar IA como fallback
+      console.log("No pre-generated content found, falling back to AI...");
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
       
@@ -171,7 +193,7 @@ Responde estrictamente en formato JSON plano:
       setAiResult(parsed);
       setView('reflection');
     } catch (error) {
-      console.error("AI Error details:", error);
+      console.error("Guía Error Details:", error);
       alert("Hubo un error al conectar con El Guía. Intentá de nuevo.");
     } finally {
       setIsGenerating(false);
