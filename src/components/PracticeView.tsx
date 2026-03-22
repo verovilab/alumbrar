@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
   RefreshCw, ChevronLeft, ChevronRight, CheckCircle2, Sparkles, 
-  Wind, Zap, BrainCircuit, MessageSquare, History, ChevronDown, Calendar, Activity
+  MessageSquare, History, ChevronDown, Calendar, Activity, Zap
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -284,47 +284,21 @@ Responde estrictamente en formato JSON plano:
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-        {/* Lado Izquierdo: La Lección en 4 Tarjetas */}
-        <div className="space-y-6 lg:sticky lg:top-20 max-h-[calc(100vh-180px)] overflow-y-auto pr-2 custom-scrollbar">
-          {lessonParts.intro && (
-            <LessonSection 
-              title="Apertura" 
-              content={lessonParts.intro} 
-              icon={<Wind size={18} />} 
-              color="bg-white border-stone-100 text-stone-600"
-              eyebrow="El Camino de la Paz"
-            />
-          )}
-
-          <LessonSection 
-            title="1. El Concepto Central" 
-            content={lessonParts.concept} 
-            icon={<Sparkles size={18} />} 
-            color="bg-stone-900 border-stone-800 text-[#FFF9F0]"
-            accent="text-[#D4AF37]"
-            eyebrow={`Lección ${dayOfYear}`}
-            highlight
-          />
-
-          {lessonParts.explanation && (
-            <LessonSection 
-              title="2. Explicación Profunda" 
-              content={lessonParts.explanation} 
-              icon={<BrainCircuit size={18} />} 
-              color="bg-emerald-50/30 border-emerald-100 text-emerald-900"
-              eyebrow="Sabiduría Diaria"
-            />
-          )}
-
-          {lessonParts.practice && (
-            <LessonSection 
-              title="3. Una Práctica Concreta" 
-              content={lessonParts.practice} 
-              icon={<Zap size={18} />} 
-              color="bg-amber-50/40 border-amber-100 text-amber-900"
-              eyebrow="Acción Consciente"
-            />
-          )}
+        {/* Lado Izquierdo: Concepto Central del Día */}
+        <div className="lg:sticky lg:top-20">
+          <div className="bg-stone-900 rounded-[3rem] p-10 text-[#FFF9F0] shadow-2xl relative overflow-hidden group">
+            <div className="absolute -right-10 -top-10 w-48 h-48 bg-[#D4AF37]/10 rounded-full blur-[100px] group-hover:scale-110 transition-transform duration-1000"></div>
+            <div className="relative z-10">
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#D4AF37] block mb-4">Lección {dayOfYear}</span>
+              <h3 className="text-2xl font-serif font-bold italic mb-8 leading-tight">
+                {lessonParts.concept}
+              </h3>
+              <div className="h-[1px] w-full bg-white/10 mb-8"></div>
+              <p className="text-white/40 text-[10px] uppercase font-black tracking-widest leading-relaxed">
+                Este concepto es la brújula para tu día. Dejá que resuene antes de expresar tu sentir a la derecha.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Lado Derecho: Input y Feeling */}
@@ -390,42 +364,6 @@ Responde estrictamente en formato JSON plano:
             </button>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-// Componentes Auxiliares Locales
-function LessonSection({ title, content, icon, color, eyebrow, accent = "text-inherit", highlight = false }: { 
-  title: string, 
-  content: string, 
-  icon: React.ReactNode, 
-  color: string, 
-  eyebrow: string,
-  accent?: string,
-  highlight?: boolean
-}) {
-  return (
-    <div className={`${color} border rounded-[2rem] p-8 shadow-sm transition-all hover:shadow-md group relative overflow-hidden`}>
-      {highlight && (
-        <div className="absolute -right-10 -top-10 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-[60px] group-hover:scale-110 transition-transform duration-1000"></div>
-      )}
-      <div className="relative z-10">
-        <div className="flex items-center justify-between mb-4">
-          <span className={`text-[9px] font-black uppercase tracking-[0.3em] ${accent} opacity-60`}>
-            {eyebrow}
-          </span>
-          <div className={`${highlight ? 'bg-[#D4AF37]/20 text-[#D4AF37]' : 'bg-stone-500/10 opacity-40'} p-2 rounded-xl`}>
-            {icon}
-          </div>
-        </div>
-        <h4 className="text-xl font-serif font-bold italic mb-4 leading-tight group-hover:translate-x-1 transition-transform">
-          {title}
-        </h4>
-        <div className={`h-[1px] w-12 ${highlight ? 'bg-[#D4AF37]/30' : 'bg-current opacity-10'} mb-6`}></div>
-        <p className={`text-sm leading-relaxed ${highlight ? 'opacity-90' : 'opacity-70'} font-medium`}>
-          {content}
-        </p>
       </div>
     </div>
   );
