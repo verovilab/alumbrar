@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User, Award, BookOpen, Heart, Clock, LogOut, Settings, Share2 } from 'lucide-react';
 import { GemaIcon } from './GemaIcon';
 import { supabase } from '../lib/supabase';
+import { EmotionalHeatMap } from './EmotionalHeatMap';
 
 interface ProfileViewProps {
   session: any;
@@ -67,6 +68,11 @@ export function ProfileView({ session, onSignOut }: ProfileViewProps) {
         <StatCard icon={<GemaIcon size={20} />} value={stats.gemsSeen} label="Gemas" />
         <StatCard icon={<Heart size={20} />} value={stats.phrasesSaved} label="Favoritos" />
         <StatCard icon={<BookOpen size={20} />} value={stats.lessonsProgress} label="Lección" />
+      </div>
+
+      {/* Mapa Emocional & Insights */}
+      <div className="bg-[#FCFBFA] rounded-[3rem] p-8 border border-stone-100 shadow-sm transition-all hover:bg-white hover:shadow-xl">
+        <EmotionalHeatMap userId={session.user.id} showInsights={true} />
       </div>
 
       {/* Acciones */}

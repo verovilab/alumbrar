@@ -258,33 +258,7 @@ Responde estrictamente en formato JSON plano:
             <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
                <Calendar size={180} className="text-stone-900" />
             </div>
-            <EmotionalHeatMap userId={userId} />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-             <StatCard label="Días Expansivos" value="14" color="text-green-500" />
-             <StatCard label="Racha Actual" value="5 días" color="text-[#D4AF37]" />
-             <StatCard label="Sentimiento Top" value="Paz" color="text-stone-600" />
-          </div>
-
-          <div className="bg-stone-900 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden">
-            <div className="absolute -left-10 -bottom-10 w-48 h-48 bg-[#D4AF37]/10 rounded-full blur-[100px]"></div>
-            <div className="relative z-10">
-              <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#D4AF37] mb-6 flex items-center gap-2">
-                <Sparkles size={14} /> Insights del Guía
-              </h4>
-              <div className="space-y-6">
-                <InsightItem 
-                  text="Los lunes experimentas más ansiedad (55% de los lunes). Considerá practicar la quietud antes de empezar tu semana." 
-                />
-                <InsightItem 
-                  text="Después de días contractivos, solés pasar por cansancio (1-2 días) antes de regresar a estados expansivos."
-                />
-                <InsightItem 
-                  text="Tus prácticas de perdón están desbloqueando un patrón recurrente de resentimiento hacia la liberación."
-                />
-              </div>
-            </div>
+            <EmotionalHeatMap userId={userId} showInsights={true} />
           </div>
         </div>
       </div>
