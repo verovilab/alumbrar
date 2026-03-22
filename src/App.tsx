@@ -286,7 +286,7 @@ export default function App() {
           )}
 
           {activeTab === 'practice' && (
-            <PracticeView userId={session?.user?.id} dayOfYear={dayOfYear} />
+            <PracticeView userId={session?.user?.id} dayOfYear={dayOfYear} lessonContent={lessonContent} />
           )}
         </main>
 
