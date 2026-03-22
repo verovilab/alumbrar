@@ -319,10 +319,12 @@ Responde estrictamente en formato JSON plano:
                 </button>
 
                 {showFeelingsDropdown && (
-                  <div className="absolute top-full left-0 right-0 mt-4 bg-white/95 backdrop-blur-xl border border-stone-100 rounded-[2.5rem] shadow-2xl z-50 p-6 max-h-[400px] overflow-y-auto no-scrollbar animate-fade-up">
-                    <FeelingGroup title="Expansivos (Luz)" icon="🟢" list={categorizedFeelings.expansivo} onSelect={(f) => { setSelectedFeeling(f); setShowFeelingsDropdown(false); }} selectedId={selectedFeeling?.id} />
-                    <FeelingGroup title="Neutros (Transición)" icon="🟡" list={categorizedFeelings.neutro} onSelect={(f) => { setSelectedFeeling(f); setShowFeelingsDropdown(false); }} selectedId={selectedFeeling?.id} />
-                    <FeelingGroup title="Contractivos (Sombra)" icon="🔴" list={categorizedFeelings.contractivo} onSelect={(f) => { setSelectedFeeling(f); setShowFeelingsDropdown(false); }} selectedId={selectedFeeling?.id} />
+                  <div className="absolute top-full left-0 right-0 mt-4 bg-white/95 backdrop-blur-xl border border-stone-100 rounded-[2.5rem] shadow-2xl z-50 p-6 max-h-[500px] overflow-y-auto custom-scrollbar animate-fade-up">
+                    <div className="space-y-8">
+                      <FeelingGroup title="Expansivos (Luz)" icon="🟢" list={categorizedFeelings.expansivo} onSelect={(f) => { setSelectedFeeling(f); setShowFeelingsDropdown(false); }} selectedId={selectedFeeling?.id} />
+                      <FeelingGroup title="Neutros (Transición)" icon="🟡" list={categorizedFeelings.neutro} onSelect={(f) => { setSelectedFeeling(f); setShowFeelingsDropdown(false); }} selectedId={selectedFeeling?.id} />
+                      <FeelingGroup title="Contractivos (Sombra)" icon="🔴" list={categorizedFeelings.contractivo} onSelect={(f) => { setSelectedFeeling(f); setShowFeelingsDropdown(false); }} selectedId={selectedFeeling?.id} />
+                    </div>
                   </div>
                 )}
               </div>
@@ -358,8 +360,8 @@ function InsightItem({ text }: { text: string }) {
 
 function FeelingGroup({ title, icon, list, onSelect, selectedId }: { title: string, icon: string, list: Feeling[], onSelect: (f: Feeling) => void, selectedId?: string }) {
   return (
-    <div className="mb-6 last:mb-0">
-      <h4 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-stone-400 mb-4 px-2">
+    <div className="mb-2 last:mb-0">
+      <h4 className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-3 px-2">
         {icon} {title}
       </h4>
       <div className="grid grid-cols-2 gap-2">
@@ -367,14 +369,13 @@ function FeelingGroup({ title, icon, list, onSelect, selectedId }: { title: stri
           <button 
             key={f.id}
             onClick={() => onSelect(f)}
-            className={`flex items-center gap-3 p-4 rounded-2xl transition-all border ${selectedId === f.id ? 'bg-stone-900 border-stone-900 text-white shadow-lg' : 'bg-stone-50 border-stone-50 hover:bg-white hover:border-stone-100 text-stone-600'}`}
+            className={`flex items-center gap-2 p-3 rounded-xl transition-all border ${selectedId === f.id ? 'bg-stone-900 border-stone-900 text-white shadow-lg' : 'bg-stone-50 border-stone-100 hover:bg-white hover:border-[#D4AF37]/30 text-stone-600'}`}
           >
-            <span className="text-xl">{f.emoji}</span>
-            <span className="text-sm font-bold truncate">{f.display_name}</span>
+            <span className="text-lg">{f.emoji}</span>
+            <span className="text-[11px] font-bold truncate">{f.display_name}</span>
           </button>
         ))}
       </div>
-      <div className="h-[1px] w-full bg-stone-50 mt-6 md:hidden"></div>
     </div>
   );
 }

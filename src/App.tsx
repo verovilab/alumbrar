@@ -291,15 +291,15 @@ export default function App() {
           )}
         </main>
 
-        {/* Navegación - Estándar Bottom Nav */}
-        <nav className="fixed bottom-0 left-0 right-0 w-full bg-white/95 backdrop-blur-xl border-t border-stone-100 shadow-[0_-4px_24px_rgba(0,0,0,0.03)] flex justify-around items-center py-3 px-2 z-[100]">
-          <NavBtn active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={<Home size={18}/>} label="Inicio" />
-          <NavBtn active={activeTab === 'gems'} onClick={() => setActiveTab('gems')} icon={<GemaIcon size={18}/>} label="Gema" />
-          <NavBtn active={activeTab === 'practice'} onClick={() => setActiveTab('practice')} icon={<Activity size={18}/>} label="Práctica" />
-          <NavBtn active={activeTab === 'qa'} onClick={() => setActiveTab('qa')} icon={<MessageCircle size={18}/>} label="Guía" />
-          <NavBtn active={activeTab === 'saved'} onClick={() => setActiveTab('saved')} icon={<Heart size={18}/>} label="Guardado" />
-          <NavBtn active={activeTab === 'lessons'} onClick={() => setActiveTab('lessons')} icon={<BookOpen size={18}/>} label="Curso" />
-          <NavBtn active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} icon={<User size={18}/>} label="Perfil" />
+        {/* Navegación - Premium Bottom Nav */}
+        <nav className="fixed bottom-0 left-0 right-0 w-full bg-white/90 backdrop-blur-2xl border-t border-stone-100/50 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] flex justify-around items-stretch px-4 z-[100] h-[72px]">
+          <NavBtn active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={<Home />} label="Inicio" />
+          <NavBtn active={activeTab === 'gems'} onClick={() => setActiveTab('gems')} icon={<GemaIcon />} label="Gema" />
+          <NavBtn active={activeTab === 'practice'} onClick={() => setActiveTab('practice')} icon={<Activity />} label="Práctica" />
+          <NavBtn active={activeTab === 'qa'} onClick={() => setActiveTab('qa')} icon={<MessageCircle />} label="Guía" />
+          <NavBtn active={activeTab === 'saved'} onClick={() => setActiveTab('saved')} icon={<Heart />} label="Guardado" />
+          <NavBtn active={activeTab === 'lessons'} onClick={() => setActiveTab('lessons')} icon={<BookOpen />} label="Curso" />
+          <NavBtn active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} icon={<User />} label="Perfil" />
         </nav>
 
         {showPricing && (
