@@ -81,8 +81,9 @@ export function useGemini(apiKey: string, userId?: string) {
 
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
+      // Usar gemini-1.5-flash-latest que suele ser más estable para despliegues recientes
       const model = genAI.getGenerativeModel({ 
-        model: 'gemini-1.5-flash',
+        model: 'gemini-1.5-flash-latest',
         systemInstruction: "Eres 'El Guía' de Camino a UCDM. Tu tono es profesional, poético y profundo. Responde siempre basándote en Un Curso de Milagros. Ayuda al usuario a perdonar y encontrar paz."
       });
 
@@ -111,9 +112,10 @@ export function useGemini(apiKey: string, userId?: string) {
         });
       }
     } catch (error) {
-      console.error("Gemini Error:", error);
+      console.error("Gemini Error Details:", error);
       setMessages(prev => [...prev, { role: 'model', text: "La conexión con el Guía se ha desvanecido.", timestamp: Date.now() }]);
-    } finally {
+    }
+ finally {
       setIsTyping(false);
     }
   };

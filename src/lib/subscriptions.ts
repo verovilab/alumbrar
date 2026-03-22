@@ -5,7 +5,7 @@ export async function getUserSubscription(userId: string) {
     .from('subscriptions')
     .select('status, plan_id')
     .eq('user_id', userId)
-    .single();
+    .maybeSingle(); // Usar maybeSingle para evitar errores si no hay suscripción
 
   if (error || !data) return { isPremium: false, plan: 'free' };
   
@@ -17,11 +17,18 @@ export async function getUserSubscription(userId: string) {
 
 export async function getMessageCount(userId: string) {
   const today = new Date().toISOString().split('T')[0];
-  const { count } = await supabase
+  
+  // chat_messages no tiene user_id directamente, hay que unir con chat_sessions
+  const { count, error } = await supabase
     .from('chat_messages')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', userId)
+    .select('id, chat_sessions!inner(user_id)', { count: 'exact', head: true })
+    .eq('chat_sessions.user_id', userId)
     .gte('created_at', today);
+
+  if (error) {
+    console.error("Error fetching message count:", error);
+    return 0;
+  }
 
   return count || 0;
 }

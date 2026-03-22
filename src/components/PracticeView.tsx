@@ -121,7 +121,7 @@ export function PracticeView({ userId, dayOfYear, lessonContent }: PracticeViewP
     setIsGenerating(true);
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
       
       const concepto = lessonParts.concept;
       const prompt = `Actúa como un místico compasivo experto en "Un Curso de Milagros".
