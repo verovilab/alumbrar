@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { SacredCard } from './ui/SacredCard';
 
 interface Feeling {
   id: string;
@@ -15,13 +16,14 @@ interface Feeling {
   color_hex: string;
 }
 
-interface PracticeViewProps {
+interface     PracticeViewProps {
   userId?: string;
   dayOfYear: number;
   lessonContent: string | null;
+  setRitualState: React.Dispatch<React.SetStateAction<any>>;
 }
 
-export function PracticeView({ userId, dayOfYear, lessonContent }: PracticeViewProps) {
+export function     PracticeView({ userId, dayOfYear, lessonContent, setRitualState }: PracticeViewProps) {
   const [view, setView] = useState<'practice' | 'reflection' | 'history'>('practice');
   const [feelings, setFeelings] = useState<Feeling[]>([]);
   const [selectedFeeling, setSelectedFeeling] = useState<Feeling | null>(null);
@@ -201,7 +203,17 @@ Responde estrictamente en formato JSON plano:
   };
 
   const handleSave = async () => {
-    if (!userId || !aiResult || !selectedFeeling) return;
+    if (userId === 'guest') {
+      alert("🕊️ Modo Invitado: Tu reflexión fue hermosa, pero para guardarla en tu historial sagrado debes iniciar sesión con Google.");
+      setIsSaving(false);
+      return;
+    }
+    
+    if (!aiResult || !selectedFeeling) {
+      setIsSaving(false);
+      return;
+    }
+
     setIsSaving(true);
     try {
       const { error } = await supabase
@@ -222,7 +234,7 @@ Responde estrictamente en formato JSON plano:
           throw error;
         }
       } else {
-        alert("Tu práctica ha sido guardada en tu historial sagrado.");
+        setRitualState((prev: any) => ({ ...prev, practice: true }));
         setView('history');
       }
     } catch (error) {
@@ -273,14 +285,13 @@ Responde estrictamente en formato JSON plano:
         </button>
 
         <div className="space-y-6">
-          <div className="bg-white p-10 rounded-[3rem] shadow-2xl border border-stone-50 relative overflow-hidden">
-            <div className="absolute -right-6 -top-6 w-32 h-32 bg-[#D4AF37]/5 rounded-full blur-3xl"></div>
+          <SacredCard glow className="relative overflow-hidden">
             <div className="flex items-center gap-3 mb-8">
               <span className="w-10 h-10 bg-stone-900 text-[#D4AF37] rounded-2xl flex items-center justify-center shadow-lg">
                 <Sparkles size={18} />
               </span>
               <div>
-                <h3 className="text-xl font-bold font-serif text-stone-900 italic">Tu Reflexión del Día</h3>
+                <h3 className="text-xl font-bold font-serif text-stone-900 dark:text-stone-100 italic">Tu Reflexión del Día</h3>
                 <span className="text-[9px] uppercase tracking-widest text-[#D4AF37] font-black">Guía personalizada</span>
               </div>
             </div>
@@ -314,7 +325,7 @@ Responde estrictamente en formato JSON plano:
                  disabled={isGenerating}
                />
             </div>
-          </div>
+          </SacredCard>
         </div>
       </div>
     );
@@ -353,7 +364,7 @@ Responde estrictamente en formato JSON plano:
 
         {/* Lado Derecho: Input y Feeling */}
         <div className="space-y-6">
-          <div className="bg-[#FCFBFA] border border-stone-100 rounded-[3rem] p-8 md:p-12 shadow-xl">
+          <SacredCard className="!p-8 md:!p-12">
             <div className="space-y-8">
               <div>
                 <label className="block text-[10px] font-black uppercase tracking-widest text-[#D4AF37] mb-4 flex items-center gap-2">
@@ -363,7 +374,7 @@ Responde estrictamente en formato JSON plano:
                   value={userInput}
                   onChange={(e) => setUserInput(e.target.value)}
                   placeholder="Escribí aquí lo que hoy ocupa tu mente (opcional)..."
-                  className="w-full min-h-[120px] p-6 rounded-[2rem] bg-stone-50 border border-stone-100 focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/5 outline-none transition-all text-stone-800 placeholder:text-stone-300 leading-relaxed font-medium"
+                  className="w-full min-h-[120px] p-6 rounded-[2rem] bg-stone-900/40 border border-white/10 focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/5 outline-none transition-all text-stone-100 placeholder:text-stone-600 leading-relaxed font-medium backdrop-blur-md"
                 />
               </div>
 
@@ -374,13 +385,13 @@ Responde estrictamente en formato JSON plano:
                 
                 <button 
                   onClick={() => setShowFeelingsDropdown(!showFeelingsDropdown)}
-                  className={`w-full p-6 rounded-[2rem] border transition-all flex items-center justify-between group ${selectedFeeling ? 'bg-white border-[#D4AF37]' : 'bg-stone-50 border-stone-100'}`}
+                  className={`w-full p-6 rounded-[2rem] transition-all flex items-center justify-between group sacred-card ${selectedFeeling ? 'border-[#D4AF37]/50' : ''}`}
                 >
                   <div className="flex items-center gap-3">
                     {selectedFeeling ? (
                       <>
                         <span className="text-2xl">{selectedFeeling.emoji}</span>
-                        <span className="font-bold text-stone-900">{selectedFeeling.display_name}</span>
+                        <span className="font-bold text-stone-100">{selectedFeeling.display_name}</span>
                       </>
                     ) : (
                       <span className="text-stone-400 font-bold">Seleccioná un sentimiento...</span>
@@ -412,7 +423,7 @@ Responde estrictamente en formato JSON plano:
                 <>Recibir Guía <Sparkles size={18} /></>
               )}
             </button>
-          </div>
+          </SacredCard>
         </div>
       </div>
     </div>

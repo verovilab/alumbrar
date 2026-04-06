@@ -85,8 +85,11 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
   };
 
   const toggleFavorite = async () => {
-    if (!userId || loading) return;
-    setLoading(true);
+    if (userId === 'guest') {
+      alert("🕊️ Modo Invitado: Debes iniciar sesión con Google para guardar gemas en tus favoritos.");
+      setLoading(false);
+      return;
+    }
 
     try {
       if (isFavorite) {
@@ -171,12 +174,15 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
         </div>
       </div>
 
-      <div className="bg-white p-10 rounded-[3rem] border border-stone-100 shadow-xl space-y-8 relative group overflow-hidden">
-        <Quote className="text-stone-50 absolute top-8 left-6 -z-10" size={80} />
+      <div className="sacred-card p-10 rounded-[3rem] shadow-xl space-y-8 relative group overflow-hidden">
+        <Quote className="text-stone-900/5 absolute top-8 left-6 -z-10" size={80} />
         
-        <div className="space-y-6 text-center">
-          <p className="text-xl font-serif italic text-stone-900 leading-snug">"{currentGema.phrase}"</p>
-          <p className="text-[10px] text-stone-400 font-bold uppercase tracking-[0.2em]">— {currentGema.author || "Un Curso de Milagros"}</p>
+        <div className="lg:sticky lg:top-24">
+          <div className="sacred-card p-10 text-stone-800 shadow-2xl relative overflow-hidden group border-stone-200/50">
+            <div className="absolute -right-10 -top-10 w-48 h-48 bg-[#D4AF37]/5 rounded-full blur-[100px] group-hover:scale-110 transition-transform duration-1000"></div>
+            <p className="text-xl font-serif italic text-stone-900 leading-snug mb-4">"{currentGema.phrase}"</p>
+            <p className="text-[10px] text-stone-400 font-bold uppercase tracking-[0.2em]">— {currentGema.author || "Un Curso de Milagros"}</p>
+          </div>
         </div>
         
         <div className="space-y-8">

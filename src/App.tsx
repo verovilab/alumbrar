@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
-  Home, BookOpen, MessageCircle, RefreshCw, LogOut, Heart, User, Activity, Moon, Sun
+  Home, BookOpen, MessageCircle, RefreshCw, LogOut, Heart, User, Activity, Moon, Sun, Sparkles, ArrowRight
 } from 'lucide-react';
 import { GemaIcon } from './components/GemaIcon';
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -18,6 +18,7 @@ import { SavedView } from './components/SavedView';
 import { ProfileView } from './components/ProfileView';
 import { ZenPlayer } from './components/ZenPlayer';
 import { PracticeView } from './components/PracticeView';
+import { FloatingPortal } from './components/ui/FloatingPortal';
 
 // Hooks & Data
 import { GEMAS } from './data/gemas';
@@ -36,6 +37,13 @@ export default function App() {
   const [showPricing, setShowPricing] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [toasts, setToasts] = useState<any[]>([]);
+  const [ritualState, setRitualState] = useState({
+    zen: false,
+    lesson: false,
+    practice: false,
+    chat: false
+  });
+  
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     if (typeof window !== 'undefined') {
       return (localStorage.getItem('theme') as 'light' | 'dark') || 'light';
@@ -66,6 +74,11 @@ export default function App() {
   }, []);
 
   const checkSubscription = async (userId: string) => {
+    if (userId === 'guest') {
+      setIsPremium(true); // Permitir todo al invitado por brevedad
+      setMsgCount(0);
+      return;
+    }
     const sub = await getUserSubscription(userId);
     setIsPremium(sub.isPremium);
     const count = await getMessageCount(userId);
@@ -96,8 +109,6 @@ export default function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  const toggleTheme = () => setTheme(t => t === 'light' ? 'dark' : 'light');
-
   const addToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
     const id = Math.random().toString(36).substring(2, 9);
     setToasts(prev => [...prev, { id, message, type }]);
@@ -124,13 +135,11 @@ export default function App() {
     if (data) {
       setCurrentGema(data);
     } else {
-      // Fallback a estático si no hay en DB
       setCurrentGema(GEMAS[dayOfYear % GEMAS.length]);
     }
   };
 
   const handleNextGema = async (category?: string) => {
-    // Intentar traer una con filtro de la DB si se pasa categoría
     let query = supabase.from('gems').select('*');
     if (category) {
       query = query.eq('category', category);
@@ -142,7 +151,6 @@ export default function App() {
       const random = data[Math.floor(Math.random() * data.length)];
       setCurrentGema(random);
     } else {
-      // Fallback a locales
       let filtered = GEMAS;
       if (category) {
         filtered = GEMAS.filter(g => g.category === category);
@@ -155,7 +163,11 @@ export default function App() {
   const handleSendMessage = async () => {
     if (!input.trim()) return;
     
-    if (!isPremium && msgCount >= 5) {
+    if (session?.user?.id === 'guest') {
+      addToast("Modo Invitado: Tus consultas no se guardarán permanentemente.", "info");
+    }
+
+    if (!isPremium && msgCount >= 5 && session?.user?.id !== 'guest') {
       setShowPricing(true);
       return;
     }
@@ -172,131 +184,152 @@ export default function App() {
     await loadLesson(num);
   };
 
+  const handleGuestAccess = () => {
+    const guestSession: any = {
+      user: {
+        id: 'guest',
+        email: 'invitado@alumbrar.com.ar',
+        user_metadata: {
+          full_name: 'Invitado de Honor'
+        }
+      },
+      expires_at: Math.floor(Date.now() / 1000) + 3600 
+    };
+    setSession(guestSession);
+    addToast("Bienvenido al Santuario (Modo Invitado)", "info");
+  };
+
   const categories = ["Calma", "Perdón", "Percepción", "Confianza", "Relaciones", "Presencia"];
 
   if (!session) {
     if (showAuth) {
       return <Auth />;
     }
-    return <LandingView onShowAuth={() => setShowAuth(true)} />;
+    return <LandingView onShowAuth={() => setShowAuth(true)} onGuestAccess={handleGuestAccess} />;
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex justify-center font-sans antialiased selection:bg-[#D4AF37]/20">
-      <div className="w-full max-w-xl lg:max-w-5xl min-h-screen bg-white shadow-2xl flex flex-col relative border-x border-stone-100 overflow-hidden">
-        
-        {/* Header */}
-        <header className="px-6 sm:px-10 pt-10 pb-6 flex justify-between items-center bg-white/95 backdrop-blur-sm sticky top-0 z-50 border-b border-stone-50">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden border border-slate-700">
-              <img src="/favicon.png" alt="Logo" className="w-full h-full object-cover" />
-            </div>
-            <div className="cursor-pointer" onClick={() => setActiveTab('home')}>
-              <h1 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900 tracking-tight">Alumbrar</h1>
-              <p className="text-[10px] uppercase tracking-[0.4em] text-stone-400 font-black">Un Espacio de Quietud</p>
-            </div>
+    <div className={`min-h-screen text-mystic flex flex-col font-inter transition-all duration-1000`}>
+      <div className="fixed inset-0 pointer-events-none opacity-40 mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/dust.png')] z-[-1]"></div>
+
+      <header className="fixed top-0 left-0 right-0 z-50 p-6 flex justify-between items-center pointer-events-none">
+        <div className="flex items-center gap-3 pointer-events-auto group cursor-pointer" onClick={() => setActiveTab('home')}>
+          <div className="w-10 h-10 bg-[#D4AF37] rounded-full flex items-center justify-center text-white shadow-lg shadow-[#D4AF37]/30 ring-4 ring-white/5 animate-pulse-slow">
+            <GemaIcon size={18} />
           </div>
-          <div className="flex items-center gap-2">
-            <button 
-              onClick={toggleTheme}
-              className="p-3 bg-stone-50 text-stone-300 rounded-full hover:text-stone-900 transition-colors"
-              title="Cambiar tema"
-            >
-              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-            </button>
+          <div>
+            <h1 className="text-lg font-serif italic gold-text leading-none">Alumbrar</h1>
+            <p className="text-[8px] uppercase tracking-[0.4em] text-[#D4AF37] opacity-60">Santuario Sagrado</p>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-3 pointer-events-auto">
+          {activeTab === 'qa' && (
             <button 
               onClick={() => window.confirm("¿Reiniciar chat?") && setMessages([])}
-              className="p-3 bg-stone-50 text-stone-300 rounded-full hover:text-stone-900 transition-colors"
-              title="Reiniciar chat"
+              className="p-3 bg-white/5 backdrop-blur-xl text-stone-300 rounded-full hover:text-[#D4AF37] transition-all border border-white/10"
+              title="Reiniciar consulta"
             >
-              <RefreshCw size={18} />
+              <RefreshCw size={16} />
             </button>
+          )}
+          {session && (
             <button 
-              onClick={() => supabase.auth.signOut()}
-              className="p-3 bg-stone-50 text-stone-300 rounded-full hover:text-red-600 transition-colors"
-              title="Cerrar sesión"
+              onClick={() => {
+                if (session.user.id === 'guest') {
+                  setSession(null);
+                } else {
+                  supabase.auth.signOut();
+                }
+              }} 
+              className="p-3 text-stone-400 hover:text-white transition-colors"
+              title="Salir del Santuario"
             >
               <LogOut size={18} />
             </button>
-          </div>
-        </header>
-
-        {/* Contenido */}
-        <main className="flex-1 px-6 sm:px-10 pt-6 pb-40 overflow-y-auto no-scrollbar">
-          {activeTab === 'home' && (
-            <HomeView 
-              dayOfYear={dayOfYear} 
-              onLoadLesson={handleLoadLesson} 
-              onSetTab={setActiveTab} 
-              currentGema={currentGema}
-            />
           )}
+        </div>
+      </header>
 
-          {activeTab === 'gems' && (
-            <GemaView 
-              currentGema={currentGema} 
-              onNextGema={handleNextGema} 
-              userId={session?.user?.id}
-              categories={categories}
-            />
-          )}
-
-          {activeTab === 'qa' && (
-            <ChatView 
-              messages={messages} 
-              isTyping={isTyping} 
-              input={input} 
-              setInput={setInput} 
-              onSendMessage={handleSendMessage} 
-              userId={session?.user?.id}
-            />
-          )}
-
-          {activeTab === 'lessons' && (
-            <LessonsView 
-              selectedLesson={selectedLesson} 
-              setSelectedLesson={setSelectedLesson} 
-              dayOfYear={dayOfYear} 
-              loadLesson={handleLoadLesson} 
-              isLoadingLesson={isLoadingLesson} 
-              lessonContent={lessonContent} 
-              userId={session?.user?.id}
-            />
-          )}
-
-          {activeTab === 'saved' && (
-            <SavedView userId={session?.user?.id} />
-          )}
-
-          {activeTab === 'profile' && (
-            <ProfileView session={session} onSignOut={() => supabase.auth.signOut()} />
-          )}
-
-          {activeTab === 'practice' && (
-            <PracticeView userId={session?.user?.id} dayOfYear={dayOfYear} lessonContent={lessonContent} />
-          )}
-        </main>
-
-        {/* Navegación - Premium Bottom Nav */}
-        <nav className="fixed bottom-0 left-0 right-0 w-full bg-white/90 backdrop-blur-2xl border-t border-stone-100/50 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] flex justify-around items-stretch px-4 z-[100] h-[72px]">
-          <NavBtn active={activeTab === 'home'} onClick={() => setActiveTab('home')} icon={<Home />} label="Inicio" />
-          <NavBtn active={activeTab === 'gems'} onClick={() => setActiveTab('gems')} icon={<GemaIcon />} label="Gema" />
-          <NavBtn active={activeTab === 'practice'} onClick={() => setActiveTab('practice')} icon={<Activity />} label="Práctica" />
-          <NavBtn active={activeTab === 'qa'} onClick={() => setActiveTab('qa')} icon={<MessageCircle />} label="Guía" />
-          <NavBtn active={activeTab === 'saved'} onClick={() => setActiveTab('saved')} icon={<Heart />} label="Guardado" />
-          <NavBtn active={activeTab === 'lessons'} onClick={() => setActiveTab('lessons')} icon={<BookOpen />} label="Curso" />
-          <NavBtn active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} icon={<User />} label="Perfil" />
-        </nav>
-
-        {showPricing && (
-          <Pricing 
-            userId={session.user.id} 
-            onClose={() => setShowPricing(false)} 
+      <main className="flex-1 w-full max-w-5xl mx-auto pt-24 pb-40 px-4 relative z-10">
+        {activeTab === 'home' && (
+          <HomeView 
+            dayOfYear={dayOfYear} 
+            onLoadLesson={handleLoadLesson} 
+            onSetTab={setActiveTab} 
+            currentGema={currentGema}
+            ritualState={ritualState}
+            setRitualState={setRitualState}
           />
         )}
-        <ZenPlayer />
-        <ToastContainer toasts={toasts} removeToast={removeToast} />
-      </div>
+
+        {activeTab === 'gems' && (
+          <GemaView 
+            currentGema={currentGema} 
+            onNextGema={handleNextGema} 
+            userId={session?.user?.id}
+            categories={categories}
+          />
+        )}
+
+        {activeTab === 'qa' && (
+          <ChatView 
+            messages={messages} 
+            isTyping={isTyping} 
+            input={input} 
+            setInput={setInput} 
+            onSendMessage={handleSendMessage} 
+            userId={session?.user?.id}
+          />
+        )}
+
+        {activeTab === 'lessons' && (
+          <LessonsView 
+            selectedLesson={selectedLesson} 
+            setSelectedLesson={setSelectedLesson} 
+            dayOfYear={dayOfYear} 
+            loadLesson={handleLoadLesson} 
+            isLoadingLesson={isLoadingLesson} 
+            lessonContent={lessonContent} 
+            userId={session?.user?.id}
+          />
+        )}
+
+        {activeTab === 'saved' && (
+          <SavedView userId={session?.user?.id} />
+        )}
+
+        {activeTab === 'profile' && session && (
+          <ProfileView session={session} onSignOut={() => {
+            if (session.user.id === 'guest') {
+              setSession(null);
+            } else {
+              supabase.auth.signOut();
+            }
+          }} />
+        )}
+
+        {activeTab === 'practice' && (
+          <PracticeView 
+            userId={session?.user?.id} 
+            dayOfYear={dayOfYear} 
+            lessonContent={lessonContent} 
+            setRitualState={setRitualState}
+          />
+        )}
+      </main>
+
+      <FloatingPortal activeTab={activeTab} onSetTab={setActiveTab} />
+      
+      {showPricing && (
+        <Pricing 
+          userId={session.user.id} 
+          onClose={() => setShowPricing(false)} 
+        />
+      )}
+      
+      <ZenPlayer />
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 }

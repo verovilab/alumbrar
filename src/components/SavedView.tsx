@@ -114,38 +114,53 @@ export function SavedView({ userId }: SavedViewProps) {
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="flex flex-col items-center text-center space-y-2">
-        <h2 className="text-3xl font-serif font-bold text-stone-900">Tus Tesoros</h2>
-        <p className="text-stone-400 text-sm">Momentos de paz que has decidido conservar.</p>
+        <h2 className="text-3xl font-serif font-bold text-[#D4AF37] italic">Tus Tesoros</h2>
+        <p className="text-stone-400 text-xs uppercase tracking-widest font-black">Momentos de paz que has decidido conservar.</p>
       </div>
 
       {/* Selector de Sub-pestañas */}
-      <div className="flex bg-stone-100 p-1.5 rounded-2xl max-w-xs mx-auto">
+      <div className="flex bg-white/5 backdrop-blur-xl p-1.5 rounded-2xl max-w-xs mx-auto border border-white/5">
         <button 
           onClick={() => setActiveSubTab('gems')}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${activeSubTab === 'gems' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-400'}`}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeSubTab === 'gems' ? 'bg-[#D4AF37] text-white shadow-lg' : 'text-stone-500 hover:text-stone-300'}`}
         >
           <Heart size={14} fill={activeSubTab === 'gems' ? "currentColor" : "none"} />
           Gemas
         </button>
         <button 
           onClick={() => setActiveSubTab('snippets')}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${activeSubTab === 'snippets' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-400'}`}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${activeSubTab === 'snippets' ? 'bg-[#D4AF37] text-white shadow-lg' : 'text-stone-500 hover:text-stone-300'}`}
         >
           <Bookmark size={14} fill={activeSubTab === 'snippets' ? "currentColor" : "none"} />
           Frases
         </button>
       </div>
 
-      {isLoading ? (
+      {userId === 'guest' ? (
+        <div className="sacred-card p-12 text-center space-y-6 animate-fade-up">
+          <div className="w-20 h-20 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto text-[#D4AF37]">
+            <Heart size={40} className="animate-pulse-slow" />
+          </div>
+          <div className="space-y-3">
+            <h3 className="text-2xl font-serif font-bold text-white italic">Tus Tesoros te esperan</h3>
+            <p className="text-stone-400 text-sm max-w-sm mx-auto leading-relaxed">
+              En el modo invitado puedes explorar el Santuario, pero para conservar gemas y frases en tu historial sagrado, necesitas identificarte.
+            </p>
+          </div>
+          <div className="pt-4">
+             <p className="text-[10px] text-[#D4AF37] font-black uppercase tracking-[0.3em]">Cierra sesión e inicia con Google para comenzar</p>
+          </div>
+        </div>
+      ) : isLoading ? (
         <div className="flex justify-center py-20 text-stone-300">
-          <div className="animate-pulse">Cargando tus tesoros...</div>
+          <div className="animate-pulse font-serif italic text-lg">Sintonizando tus tesoros...</div>
         </div>
       ) : (
         <div className="space-y-4">
           {activeSubTab === 'gems' ? (
             savedGems.length > 0 ? (
               savedGems.map((fav) => (
-                <div key={fav.id} className="bg-white p-6 rounded-[2rem] border border-stone-100 shadow-sm hover:shadow-md transition-all group">
+                <div key={fav.id} className="sacred-card p-6 rounded-[2rem] shadow-sm hover:shadow-md transition-all group border-white/5">
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-2">
                        <GemaIcon size={14} className="text-[#D4AF37]" />
@@ -155,7 +170,7 @@ export function SavedView({ userId }: SavedViewProps) {
                       <Trash2 size={16} />
                     </button>
                   </div>
-                  <p className="font-serif italic text-stone-800 mb-2">"{fav.displayData?.phrase}"</p>
+                  <p className="font-serif italic text-stone-100 mb-2">"{fav.displayData?.phrase}"</p>
                   <p className="text-[9px] text-stone-400 font-bold uppercase tracking-widest text-right">— {fav.displayData?.author || "Un Curso de Milagros"}</p>
                 </div>
               ))
@@ -165,7 +180,7 @@ export function SavedView({ userId }: SavedViewProps) {
           ) : (
             savedSnippets.length > 0 ? (
               savedSnippets.map((snip) => (
-                <div key={snip.id} className="bg-[#FAF8F5] p-6 rounded-[2rem] border border-stone-100 relative group">
+                <div key={snip.id} className="sacred-card p-6 rounded-[2rem] border-white/5 relative group">
                   <button onClick={() => removeSnippet(snip.id)} className="absolute top-4 right-4 p-2 text-stone-200 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100">
                     <Trash2 size={14} />
                   </button>
@@ -173,7 +188,7 @@ export function SavedView({ userId }: SavedViewProps) {
                     <Bookmark size={12} className="text-stone-400" />
                     <span className="text-[9px] uppercase tracking-widest text-stone-400 font-black">{snip.source || "Marcador"}</span>
                   </div>
-                  <p className="text-sm text-stone-700 leading-relaxed italic">"{snip.content}"</p>
+                  <p className="text-sm text-stone-200 leading-relaxed italic">"{snip.content}"</p>
                   <div className="mt-4 flex justify-end text-[8px] text-stone-300 uppercase tracking-tighter">
                     {new Date(snip.created_at).toLocaleDateString()}
                   </div>

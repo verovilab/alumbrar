@@ -54,12 +54,12 @@ export function ProfileView({ session, onSignOut }: ProfileViewProps) {
           {session.user.user_metadata.avatar_url ? (
             <img src={session.user.user_metadata.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
-            <User size={40} className="text-[#D4AF37]" />
+            <User size={40} className="text-[#D4AF37] opacity-60" />
           )}
         </div>
         <div>
-          <h2 className="text-2xl font-serif font-bold text-stone-900">{session.user.user_metadata.full_name || "Buscador de Paz"}</h2>
-          <p className="text-stone-400 text-sm mt-1">{session.user.email}</p>
+          <h2 className="text-2xl font-serif font-bold text-[#D4AF37] italic">{session.user.user_metadata.full_name || "Buscador de Paz"}</h2>
+          <p className="text-stone-400 text-[10px] uppercase tracking-widest mt-1">{session.user.email}</p>
         </div>
       </div>
 
@@ -71,7 +71,7 @@ export function ProfileView({ session, onSignOut }: ProfileViewProps) {
       </div>
 
       {/* Mapa Emocional & Insights */}
-      <div className="bg-[#FCFBFA] rounded-[3rem] p-8 border border-stone-100 shadow-sm transition-all hover:bg-white hover:shadow-xl">
+      <div className="sacred-card rounded-[3rem] p-8 shadow-sm">
         <EmotionalHeatMap userId={session.user.id} showInsights={true} />
       </div>
 
@@ -79,30 +79,30 @@ export function ProfileView({ session, onSignOut }: ProfileViewProps) {
       <div className="space-y-3">
         <button 
           onClick={handleShareApp}
-          className="w-full flex items-center justify-between p-5 bg-[#FAF8F5] rounded-3xl hover:bg-stone-100 transition-colors group"
+          className="w-full flex items-center justify-between p-5 sacred-card rounded-3xl hover:bg-white/5 transition-colors group"
         >
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-stone-900 group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center text-[#D4AF37] group-hover:scale-110 transition-transform">
               <Share2 size={18} />
             </div>
             <div className="text-left">
-              <p className="text-sm font-bold text-stone-900">Compartir Alumbrar</p>
-              <p className="text-[10px] text-stone-400 uppercase tracking-widest">Invita a otros a la paz</p>
+              <p className="text-sm font-bold text-stone-200">Compartir Alumbrar</p>
+              <p className="text-[10px] text-stone-500 uppercase tracking-widest">Invita a otros a la paz</p>
             </div>
           </div>
         </button>
 
         <button 
           onClick={onSignOut}
-          className="w-full flex items-center justify-between p-5 bg-stone-50 rounded-3xl hover:bg-red-50 transition-colors group"
+          className="w-full flex items-center justify-between p-5 sacred-card rounded-3xl hover:bg-red-500/10 transition-colors group border-red-500/20"
         >
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-stone-300 group-hover:text-red-500 group-hover:scale-110 transition-transform">
+            <div className="w-10 h-10 bg-black/20 rounded-full flex items-center justify-center text-stone-500 group-hover:text-red-500 group-hover:scale-110 transition-transform">
               <LogOut size={18} />
             </div>
             <div className="text-left">
-              <p className="text-sm font-bold text-stone-900">Cerrar Sesión</p>
-              <p className="text-[10px] text-stone-400 uppercase tracking-widest">Hasta pronto</p>
+              <p className="text-sm font-bold text-stone-200">Cerrar Sesión</p>
+              <p className="text-[10px] text-stone-500 uppercase tracking-widest">Hasta pronto</p>
             </div>
           </div>
         </button>
@@ -119,10 +119,10 @@ export function ProfileView({ session, onSignOut }: ProfileViewProps) {
 
 function StatCard({ icon, value, label }: { icon: React.ReactNode, value: number, label: string }) {
   return (
-    <div className="bg-white p-5 rounded-[2rem] border border-stone-100 text-center space-y-1 shadow-sm">
+    <div className="sacred-card p-5 rounded-[2rem] text-center space-y-1 shadow-sm border-[#D4AF37]/10">
       <div className="text-[#D4AF37] flex justify-center mb-1">{icon}</div>
-      <p className="text-xl font-bold text-stone-900">{value}</p>
-      <p className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">{label}</p>
+      <p className="text-xl font-bold text-stone-100">{value}</p>
+      <p className="text-[9px] uppercase tracking-widest text-[#D4AF37]/60 font-bold">{label}</p>
     </div>
   );
 }

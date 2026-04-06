@@ -99,7 +99,7 @@ export function LessonsView({
               <button 
                 key={i} 
                 onClick={() => loadLesson(i + 1)} 
-                className={`aspect-square rounded-xl flex items-center justify-center text-[10px] font-bold border transition-all hover:scale-105 active:scale-90 ${i+1 === dayOfYear ? 'bg-stone-900 text-[#D4AF37] border-stone-900 shadow-md' : 'bg-white text-stone-400 border-stone-100'}`}
+                className={`aspect-square rounded-xl flex items-center justify-center text-[10px] font-bold border transition-all hover:scale-110 active:scale-90 ${i+1 === dayOfYear ? 'bg-[#D4AF37] text-white border-[#D4AF37] shadow-lg shadow-[#D4AF37]/20 pulse-slow' : 'bg-white/5 text-stone-400 border-white/10 hover:border-[#D4AF37]/50'}`}
               >
                 {i + 1}
               </button>
@@ -111,7 +111,7 @@ export function LessonsView({
           <button onClick={() => setSelectedLesson(null)} className="flex items-center gap-2 text-[10px] font-black uppercase text-stone-400 hover:text-stone-900 transition-colors">
             <ChevronLeft size={14} /> Volver al Índice
           </button>
-          <div className="bg-white p-10 rounded-[2.5rem] border border-stone-50 shadow-lg min-h-[400px]">
+          <div className="sacred-card p-10 rounded-[2.5rem] shadow-lg min-h-[400px]">
             <div className="mb-6 flex justify-between items-start">
               <div>
                 <span className="text-[9px] font-black uppercase tracking-[0.3em] text-[#D4AF37] block mb-1">Un Curso de Milagros</span>
@@ -147,7 +147,7 @@ export function LessonsView({
                       title="Apertura" 
                       content={lessonParts.intro} 
                       icon={<Wind size={18} />} 
-                      color="bg-white border-stone-100 text-stone-600"
+                      color="sacred-card border-white/5 text-stone-300"
                       eyebrow="El Camino de la Paz"
                     />
                   )}
@@ -167,7 +167,7 @@ export function LessonsView({
                       title="2. Explicación Profunda" 
                       content={lessonParts.explanation} 
                       icon={<BrainCircuit size={18} />} 
-                      color="bg-emerald-50/30 border-emerald-100 text-emerald-900"
+                      color="sacred-card border-[#D4AF37]/10 text-stone-200"
                       eyebrow="Sabiduría Diaria"
                     />
                   )}
@@ -177,7 +177,7 @@ export function LessonsView({
                       title="3. Una Práctica Concreta" 
                       content={lessonParts.practice} 
                       icon={<Zap size={18} />} 
-                      color="bg-amber-50/40 border-amber-100 text-amber-900"
+                      color="sacred-card border-[#D4AF37]/20 text-[#D4AF37]"
                       eyebrow="Acción Consciente"
                     />
                   )}

@@ -1,47 +1,71 @@
-import { BookOpen, MessageCircle, Wind, ArrowRight } from 'lucide-react';
+import { BookOpen, MessageCircle, Wind, ArrowRight, Sparkles } from 'lucide-react';
 import { GemaIcon } from './GemaIcon';
 
 interface LandingViewProps {
   onShowAuth: () => void;
+  onGuestAccess: () => void;
 }
 
-export function LandingView({ onShowAuth }: LandingViewProps) {
+export function LandingView({ onShowAuth, onGuestAccess }: LandingViewProps) {
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center font-sans antialiased text-stone-900 selection:bg-[#D4AF37]/20 pt-8 md:pt-14">
+    <div className="min-h-screen text-mystic flex flex-col items-center justify-center font-inter pt-8 md:pt-14 relative overflow-hidden">
+      {/* ATMOSPHERE BACKGROUND (Same as Home) */}
+      <div className="fixed inset-0 z-[-1] bg-black">
+        <img 
+          src="/assets/bg-portal.png" 
+          alt="Atmosphere" 
+          className="w-full h-full object-cover opacity-60 animate-fade-in"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/80"></div>
+      </div>
+
       {/* Hero Section */}
-      <div className="w-full max-w-5xl px-6 pt-8 pb-10 flex flex-col items-center text-center space-y-6 animate-fade-in">
-        <div className="w-16 h-16 rounded-full bg-slate-900 flex items-center justify-center shadow-2xl mb-2 border border-slate-800">
-           <img src="/favicon.png" alt="Logo" className="w-9/12 h-9/12 object-contain rounded-full" />
+      <div className="w-full max-w-5xl px-6 py-20 flex flex-col items-center text-center space-y-10 animate-fade-up">
+        <div className="w-24 h-24 rounded-full bg-[#D4AF37] flex items-center justify-center shadow-[0_0_50px_rgba(212,175,55,0.3)] animate-pulse-slow">
+           <GemaIcon size={40} className="text-white" />
         </div>
-        <h1 className="text-4xl md:text-6xl font-serif font-bold tracking-tight text-slate-900">Alumbrar</h1>
-        <p className="text-base md:text-lg text-stone-500 max-w-xl font-medium leading-relaxed">
-          Un espacio de quietud diseñado para acompañar tu estudio de <span className="text-stone-900 italic font-serif">Un Curso de Milagros</span>.
+        <div className="space-y-4">
+          <h1 className="text-5xl md:text-8xl font-serif italic gold-text tracking-tighter">Alumbrar</h1>
+          <p className="text-[10px] md:text-sm text-[#D4AF37] uppercase tracking-[0.6em] font-black opacity-80 decoration-stone-500 underline-offset-8 underline">Santuario de Paz Interior</p>
+        </div>
+        
+        <p className="text-stone-300 max-w-xl font-medium leading-relaxed italic font-serif text-lg md:text-xl">
+          "Un espacio de quietud diseñado para acompañar tu despertar en <span className="text-white/90">Un Curso de Milagros</span>."
         </p>
-        <button 
-          onClick={onShowAuth}
-          className="px-10 py-5 bg-slate-900 text-[#D4AF37] rounded-3xl font-black uppercase tracking-widest text-sm shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-4 group"
-        >
-          Comenzar mi viaje <ArrowRight className="group-hover:translate-x-2 transition-transform" />
-        </button>
+
+        <div className="flex flex-col md:flex-row gap-4 w-full max-w-md">
+          <button 
+            onClick={onShowAuth}
+            className="flex-1 px-8 py-5 bg-[#D4AF37] text-white rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-4 group"
+          >
+            Iniciar Viaje <ArrowRight className="group-hover:translate-x-2 transition-transform" />
+          </button>
+          <button 
+            onClick={onGuestAccess}
+            className="flex-1 px-8 py-5 sacred-card text-stone-200 rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-white/5 transition-all border-[#D4AF37]/20 flex items-center justify-center gap-4 group"
+          >
+            Invitado <Sparkles size={16} className="text-[#D4AF37]" />
+          </button>
+        </div>
       </div>
 
       {/* Features Grid */}
-      <div className="w-full max-w-5xl px-6 py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-stone-100 space-y-3 hover:shadow-xl transition-all">
-          <BookOpen className="text-[#D4AF37]" size={32} />
-          <h3 className="text-xl font-bold font-serif">Lecciones Diarias</h3>
-          <p className="text-sm text-stone-400 leading-relaxed">Accede al resumen y práctica de la lección que te corresponde hoy de forma instantánea.</p>
-        </div>
-        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-stone-100 space-y-3 hover:shadow-xl transition-all">
-          <GemaIcon className="text-[#D4AF37]" size={32} />
-          <h3 className="text-xl font-bold font-serif">Gemas de Sabiduría</h3>
-          <p className="text-sm text-stone-400 leading-relaxed">Inspiraciones aleatorias y temáticas para elevar tu vibración en momentos de duda.</p>
-        </div>
-        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-stone-100 space-y-3 hover:shadow-xl transition-all">
-          <MessageCircle className="text-[#D4AF37]" size={32} />
-          <h3 className="text-xl font-bold font-serif">Guía Espiritual IA</h3>
-          <p className="text-sm text-stone-400 cemetery-stone-400 leading-relaxed">Un chat inteligente entrenado en la profundidad del Curso para despejar tus dudas.</p>
-        </div>
+      <div className="w-full max-w-5xl px-6 py-20 grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+        <LandingFeature 
+          icon={<BookOpen size={32} />} 
+          title="Lecciones Diarias" 
+          desc="Accede al resumen y práctica de la lección que te corresponde hoy de forma instantánea." 
+        />
+        <LandingFeature 
+          icon={<GemaIcon size={32} />} 
+          title="Gemas de Sabiduría" 
+          desc="Inspiraciones aleatorias y temáticas para elevar tu vibración en momentos de duda." 
+        />
+        <LandingFeature 
+          icon={<MessageCircle size={32} />} 
+          title="El Guía IA" 
+          desc="Un chat inteligente entrenado en la profundidad del Curso para despejar tus dudas." 
+        />
       </div>
 
       {/* Quote Preview */}
@@ -52,19 +76,30 @@ export function LandingView({ onShowAuth }: LandingViewProps) {
         </h2>
       </div>
 
-      {/* Footer Público (Google Requirement) */}
-      <footer className="w-full max-w-5xl px-6 py-10 mt-auto border-t border-stone-100 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+      {/* Footer Público */}
+      <footer className="w-full max-w-5xl px-6 py-10 mt-auto border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left relative z-10 backdrop-blur-sm">
         <div className="space-y-2">
-          <p className="text-sm font-bold text-slate-900">Alumbrar | Un Espacio de Quietud</p>
-          <p className="text-xs text-stone-400 max-w-sm">
-            Diseñado para la paz interior. Basado en <em>Un Curso de Milagros</em>.
+          <p className="text-sm font-bold gold-text">Alumbrar | Santuario Sagrado</p>
+          <p className="text-[10px] text-stone-500 max-w-sm uppercase tracking-widest">
+            Diseñado para la paz interior. Basado en Un Curso de Milagros.
           </p>
         </div>
         <div className="flex gap-8">
-          <a href="/privacy.html" className="text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-[#D4AF37] transition-colors">Privacidad</a>
-          <a href="/terms.html" className="text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-[#D4AF37] transition-colors">Términos</a>
+          <a href="/privacy.html" className="text-[9px] font-black uppercase tracking-widest text-stone-500 hover:text-[#D4AF37] transition-colors">Privacidad</a>
+          <a href="/terms.html" className="text-[9px] font-black uppercase tracking-widest text-stone-500 hover:text-[#D4AF37] transition-colors">Términos</a>
         </div>
       </footer>
     </div>
   );
+}
+
+function LandingFeature({ icon, title, desc }: { icon: React.ReactNode, title: string, desc: string }) {
+  return (
+    <div className="bg-white/5 backdrop-blur-lg border border-white/10 p-10 rounded-[3rem] space-y-4 hover:bg-white/10 transition-all group overflow-hidden relative">
+      <div className="absolute -right-6 -top-6 w-24 h-24 bg-[#D4AF37]/5 rounded-full blur-2xl group-hover:scale-150 transition-transform"></div>
+      <div className="text-[#D4AF37] mb-2">{icon}</div>
+      <h3 className="text-xl font-bold font-serif text-white italic">{title}</h3>
+      <p className="text-sm text-stone-400 leading-relaxed">{desc}</p>
+    </div>
+  )
 }
