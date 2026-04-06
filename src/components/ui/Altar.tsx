@@ -20,23 +20,23 @@ export function Altar({ steps, activeStep }: AltarProps) {
       {/* Visual Altar Core */}
       <div className="relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
         {/* Outer Glow Halo */}
-        <div className={`absolute inset-0 rounded-full blur-[60px] transition-all duration-1000 opacity-60 ${progress === 100 ? 'bg-[#D4AF37] scale-125' : 'bg-[#D4AF37]/20 scale-100'}`} />
+        <div className={`absolute inset-0 rounded-full blur-[70px] transition-all duration-1000 opacity-80 ${progress === 100 ? 'bg-[#D4AF37] scale-150' : 'bg-black/60 scale-110'}`} />
         
         {/* Altar base / Circle */}
-        <div className="absolute inset-0 border-2 border-[#D4AF37]/10 rounded-full animate-spin-slow"></div>
-        <div className="absolute inset-4 border border-[#D4AF37]/5 rounded-full rotate-45"></div>
+        <div className="absolute inset-0 border-2 border-[#D4AF37]/30 rounded-full animate-spin-slow"></div>
+        <div className="absolute inset-1 border border-[#D4AF37]/10 rounded-full rotate-45"></div>
         
         {/* Central Icon */}
         <div className="relative z-10 flex flex-col items-center gap-1 animate-fade-in">
           {progress === 100 ? (
             <>
-              <Sparkles className="text-[#D4AF37] animate-pulse" size={48} />
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] gold-text">Santuario Iluminado</span>
+              <Sparkles className="text-[#D4AF37] animate-pulse drop-shadow-[0_0_15px_rgba(212,175,55,0.6)]" size={56} />
+              <span className="text-sm font-black uppercase tracking-[0.5em] gold-text drop-shadow-2xl">Santuario Iluminado</span>
             </>
           ) : (
             <>
-              <Sun className="text-stone-300 dark:text-stone-700" size={32} />
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-stone-300 mt-2">Ritual de Hoy</span>
+              <Sun className="text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]" size={40} />
+              <span className="text-xs font-black uppercase tracking-[0.5em] text-[#D4AF37] mt-3 drop-shadow-lg">Ritual de Hoy</span>
             </>
           )}
         </div>
@@ -51,10 +51,10 @@ export function Altar({ steps, activeStep }: AltarProps) {
           return (
             <div 
               key={step.id}
-              className={`absolute w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all duration-700 border ${
+              className={`absolute w-12 h-12 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all duration-700 border-2 ${
                 step.completed 
-                ? 'bg-[#D4AF37] border-[#D4AF37] text-white shadow-[0_0_15px_rgba(212,175,55,0.4)]' 
-                : 'bg-white/80 dark:bg-stone-900/80 border-stone-100 dark:border-stone-800 text-stone-300'
+                ? 'bg-[#D4AF37] border-white/20 text-white shadow-[0_0_25px_rgba(212,175,55,0.5)]' 
+                : 'bg-white/95 dark:bg-black/80 border-[#D4AF37]/20 text-stone-600 shadow-xl'
               }`}
               style={{
                 transform: `translate(${x}px, ${y}px)`,
@@ -62,7 +62,7 @@ export function Altar({ steps, activeStep }: AltarProps) {
               }}
               title={step.label}
             >
-              {step.completed ? <CheckCircle2 size={16} /> : step.icon}
+              {step.completed ? <CheckCircle2 size={24} /> : step.icon}
             </div>
           );
         })}
@@ -75,8 +75,8 @@ export function Altar({ steps, activeStep }: AltarProps) {
                 <div key={s.id} className={`h-1 rounded-full transition-all duration-700 ${s.completed ? 'w-8 bg-[#D4AF37]' : 'w-4 bg-stone-100 dark:bg-stone-800'}`} />
             ))}
         </div>
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-stone-400">
-            {completedCount} de {steps.length} pasos hacia la paz
+        <p className="text-sm font-black uppercase tracking-[0.4em] text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+            <span className="text-[#D4AF37]">{completedCount}</span> de {steps.length} pasos hacia la paz
         </p>
       </div>
     </div>
