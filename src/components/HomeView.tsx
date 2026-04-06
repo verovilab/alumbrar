@@ -124,8 +124,8 @@ export function HomeView({
       </section>
 
       {/* Footer / Seed of Thought */}
-      <footer className="text-center py-12 opacity-40">
-        <p className="text-[10px] font-serif italic text-stone-500">
+      <footer className="text-center py-16 opacity-80 border-t border-white/5 mx-8">
+        <p className="text-xs md:text-sm font-serif italic text-stone-200 drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
           "Solo la Verdad es verdad. No hay nada más."
         </p>
       </footer>
