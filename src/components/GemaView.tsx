@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Repeat, Quote, Zap, Heart, Share2, Timer, CheckCircle, Bell } from 'lucide-react';
 import { GemaIcon } from './GemaIcon';
-import { Gema } from '../data/gemas';
+import { Gema } from '../types';
 import { supabase } from '../lib/supabase';
 
 interface GemaViewProps {
-  currentGema: Gema;
+  currentGema: Gema | null;
   onNextGema: (category?: string) => void;
   userId?: string;
   categories: string[];
@@ -13,6 +13,15 @@ interface GemaViewProps {
 
 export function GemaView({ currentGema, onNextGema, userId, categories }: GemaViewProps) {
   const [isFavorite, setIsFavorite] = useState(false);
+  
+  if (!currentGema) {
+    return (
+      <div className="flex flex-col items-center justify-center p-20 animate-pulse">
+        <GemaIcon size={40} className="text-stone-200 mb-4" />
+        <p className="text-stone-400 font-serif italic">Sintonizando sabiduría...</p>
+      </div>
+    );
+  }
   const [loading, setLoading] = useState(false);
   const [isFading, setIsFading] = useState(false);
   

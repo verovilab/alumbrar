@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
-  Home, BookOpen, MessageCircle, RefreshCw, LogOut, Heart, User, Activity
+  Home, BookOpen, MessageCircle, RefreshCw, LogOut, Heart, User, Activity, Moon, Sun
 } from 'lucide-react';
 import { GemaIcon } from './components/GemaIcon';
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -22,9 +22,12 @@ import { PracticeView } from './components/PracticeView';
 // Hooks & Data
 import { GEMAS } from './data/gemas';
 import { useGemini } from './hooks/useGemini';
+import { useLessons } from './hooks/useLessons';
 import { getUserSubscription, getMessageCount } from './lib/subscriptions';
 import { Pricing } from './components/Pricing';
 import { Session } from '@supabase/supabase-js';
+import { ToastContainer } from './components/ui/Toast';
+import { Gema } from './types';
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -32,12 +35,16 @@ export default function App() {
   const [msgCount, setMsgCount] = useState(0);
   const [showPricing, setShowPricing] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
+  const [toasts, setToasts] = useState<any[]>([]);
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    if (typeof window !== 'undefined') {
+      return (localStorage.getItem('theme') as 'light' | 'dark') || 'light';
+    }
+    return 'light';
+  });
   
   const [activeTab, setActiveTab] = useState<'home' | 'gems' | 'qa' | 'lessons' | 'saved' | 'profile' | 'practice'>('home');
   const [input, setInput] = useState('');
-  const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
-  const [lessonContent, setLessonContent] = useState<string | null>(null);
-  const [isLoadingLesson, setIsLoadingLesson] = useState(false);
 
   // Auth & Subscription Listener
   useEffect(() => {
@@ -65,9 +72,10 @@ export default function App() {
     setMsgCount(count);
   };
 
-  // Gemini Hook
+  // Gemini & Lessons Hooks
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
   const { messages, setMessages, isTyping, sendMessage } = useGemini(apiKey, session?.user?.id);
+  const { selectedLesson, setSelectedLesson, lessonContent, isLoadingLesson, loadLesson } = useLessons(apiKey);
 
   const dayOfYear = useMemo(() => {
     const now = new Date();
@@ -76,7 +84,28 @@ export default function App() {
     return Math.floor(diff / (1000 * 60 * 60 * 24));
   }, []);
 
-  const [currentGema, setCurrentGema] = useState<any>(null);
+  const [currentGema, setCurrentGema] = useState<Gema | null>(null);
+
+  // Tema y Persistencia
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(t => t === 'light' ? 'dark' : 'light');
+
+  const addToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    const id = Math.random().toString(36).substring(2, 9);
+    setToasts(prev => [...prev, { id, message, type }]);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
 
   // Cargar Gema Diaria y Lección del día al iniciar
   useEffect(() => {
@@ -138,59 +167,9 @@ export default function App() {
     setMsgCount((prev: number) => prev + 1);
   };
 
-  const loadLesson = async (num: number) => {
-    setSelectedLesson(num);
-    setLessonContent(null);
-    setIsLoadingLesson(true);
+  const handleLoadLesson = async (num: number) => {
     setActiveTab('lessons');
-    
-    try {
-      // 1. Intentar cargar desde Supabase
-      const { data: dbLesson, error: dbError } = await supabase
-        .from('lessons')
-        .select('content')
-        .eq('number', num)
-        .single();
-
-      // Si el contenido existe y es suficientemente largo (no es un placeholder)
-      if (dbLesson && !dbError && dbLesson.content.length > 300) {
-        setLessonContent(dbLesson.content);
-        return;
-      }
-
-      // 2. Generar con IA (Gemini 2.5) si no hay o es muy corto
-      console.log(`Generating/Updating Lesson ${num} with AI...`);
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
-      const prompt = `Actúa como un maestro experto y profundo en Un Curso de Milagros. Proporciona un resumen inspirador de la Lección ${num}. Estructúralo con: 1. El concepto central. 2. Una explicación profunda para la vida diaria. 3. Una práctica concreta para hoy. Usa un tono que transmita paz y verdad. Evita introducciones genéricas, ve directo a la esencia.`;
-      
-      const result = await model.generateContent(prompt);
-      const fullContent = (await result.response).text() || "La Verdad espera tu reconocimiento silencioso.";
-      
-      setLessonContent(fullContent);
-
-      // 3. Auto-llenado: Guardar en la DB para la próxima vez
-      console.log(`Saving Lesson ${num} to DB...`);
-      const { error: upsertError } = await supabase
-        .from('lessons')
-        .upsert({ 
-          number: num, 
-          title: `Lección ${num}`, 
-          content: fullContent 
-        }, { onConflict: 'number' });
-
-      if (upsertError) {
-        console.error("Supabase SAVE Error (RLS?):", upsertError);
-      } else {
-        console.log(`Lesson ${num} SAVED successfully!`);
-      }
-
-    } catch (e: any) {
-      console.error("Lesson Error:", e);
-      setLessonContent(`Disculpa, hubo un problema al sintonizar la lección. ${e.message || ""}`);
-    } finally {
-      setIsLoadingLesson(false);
-    }
+    await loadLesson(num);
   };
 
   const categories = ["Calma", "Perdón", "Percepción", "Confianza", "Relaciones", "Presencia"];
@@ -219,6 +198,13 @@ export default function App() {
           </div>
           <div className="flex items-center gap-2">
             <button 
+              onClick={toggleTheme}
+              className="p-3 bg-stone-50 text-stone-300 rounded-full hover:text-stone-900 transition-colors"
+              title="Cambiar tema"
+            >
+              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+            </button>
+            <button 
               onClick={() => window.confirm("¿Reiniciar chat?") && setMessages([])}
               className="p-3 bg-stone-50 text-stone-300 rounded-full hover:text-stone-900 transition-colors"
               title="Reiniciar chat"
@@ -240,7 +226,7 @@ export default function App() {
           {activeTab === 'home' && (
             <HomeView 
               dayOfYear={dayOfYear} 
-              onLoadLesson={loadLesson} 
+              onLoadLesson={handleLoadLesson} 
               onSetTab={setActiveTab} 
               currentGema={currentGema}
             />
@@ -271,7 +257,7 @@ export default function App() {
               selectedLesson={selectedLesson} 
               setSelectedLesson={setSelectedLesson} 
               dayOfYear={dayOfYear} 
-              loadLesson={loadLesson} 
+              loadLesson={handleLoadLesson} 
               isLoadingLesson={isLoadingLesson} 
               lessonContent={lessonContent} 
               userId={session?.user?.id}
@@ -309,6 +295,7 @@ export default function App() {
           />
         )}
         <ZenPlayer />
+        <ToastContainer toasts={toasts} removeToast={removeToast} />
       </div>
     </div>
   );

@@ -2,14 +2,10 @@ import { useState, useEffect } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { supabase } from '../lib/supabase';
 
-export interface Message {
-  role: 'user' | 'model';
-  text: string;
-  timestamp: number;
-}
+import { ChatMessage } from '../types';
 
 export function useGemini(apiKey: string, userId?: string) {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
 
@@ -65,11 +61,11 @@ export function useGemini(apiKey: string, userId?: string) {
     }
   };
 
-  const sendMessage = async (userText: string, currentMessages: Message[]) => {
+  const sendMessage = async (userText: string, currentMessages: ChatMessage[]) => {
     if (!userText || isTyping || !userId || !sessionId) return;
 
-    const newMsg: Message = { role: 'user', text: userText, timestamp: Date.now() };
-    setMessages(prev => [...prev, newMsg]);
+    const newMsg: ChatMessage = { role: 'user', text: userText, timestamp: Date.now() };
+    setMessages((prev: ChatMessage[]) => [...prev, newMsg]);
     setIsTyping(true);
 
     // Save user message to DB
@@ -101,8 +97,8 @@ export function useGemini(apiKey: string, userId?: string) {
       const replyText = response.text();
       
       if (replyText) {
-        const aiMsg: Message = { role: 'model', text: replyText, timestamp: Date.now() };
-        setMessages(prev => [...prev, aiMsg]);
+        const aiMsg: ChatMessage = { role: 'model', text: replyText, timestamp: Date.now() };
+        setMessages((prev: ChatMessage[]) => [...prev, aiMsg]);
         
         // Save AI message to DB
         await supabase.from('chat_messages').insert({
@@ -113,7 +109,7 @@ export function useGemini(apiKey: string, userId?: string) {
       }
     } catch (error) {
       console.error("Gemini Error Details:", error);
-      setMessages(prev => [...prev, { role: 'model', text: "La conexión con el Guía se ha desvanecido.", timestamp: Date.now() }]);
+      setMessages((prev: ChatMessage[]) => [...prev, { role: 'model', text: "La conexión con el Guía se ha desvanecido.", timestamp: Date.now() }]);
     }
  finally {
       setIsTyping(false);

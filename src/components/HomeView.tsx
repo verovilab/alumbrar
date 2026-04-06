@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Wind, BookOpen } from 'lucide-react';
 import { GemaIcon } from './GemaIcon';
 
+import { Gema } from '../types';
+
 interface HomeViewProps {
   dayOfYear: number;
   onLoadLesson: (num: number) => void;
-  onSetTab: (tab: 'home' | 'gems' | 'qa' | 'lessons' | 'saved' | 'profile') => void;
-  currentGema: any;
+  onSetTab: (tab: any) => void;
+  currentGema: Gema | null;
 }
 
 export function HomeView({ dayOfYear, onLoadLesson, onSetTab, currentGema }: HomeViewProps) {
