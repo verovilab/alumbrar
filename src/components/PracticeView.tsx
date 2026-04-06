@@ -257,10 +257,10 @@ Responde estrictamente en formato JSON plano:
       <div className="max-w-4xl mx-auto px-4 py-8 animate-fade-in pb-32">
         <div className="flex justify-between items-center mb-10">
           <div>
-            <h2 className="text-3xl font-serif font-bold text-stone-900 italic">Tu Viaje Emocional</h2>
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-stone-400 mt-1">Marzo 2026</p>
+            <h2 className="text-3xl font-serif font-bold text-white italic">Tu Viaje Emocional</h2>
+            <p className="text-xs font-black uppercase tracking-[0.3em] text-[#D4AF37] mt-1">Marzo 2026</p>
           </div>
-          <button onClick={() => setView('practice')} className="px-6 py-3 bg-stone-900 text-[#D4AF37] rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-[#D4AF37]/10 flex items-center gap-2">
+          <button onClick={() => setView('practice')} className="px-6 py-3 bg-[#D4AF37] text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-[#D4AF37]/20 flex items-center gap-2">
             <ChevronLeft size={16} /> Nueva Práctica
           </button>
         </div>
@@ -291,21 +291,21 @@ Responde estrictamente en formato JSON plano:
                 <Sparkles size={18} />
               </span>
               <div>
-                <h3 className="text-xl font-bold font-serif text-stone-900 dark:text-stone-100 italic">Tu Reflexión del Día</h3>
-                <span className="text-[9px] uppercase tracking-widest text-[#D4AF37] font-black">Guía personalizada</span>
+                <h3 className="text-2xl font-bold font-serif text-white italic">Tu Reflexión del Día</h3>
+                <span className="text-xs uppercase tracking-widest text-[#D4AF37] font-black">Guía personalizada</span>
               </div>
             </div>
 
-            <p className="text-stone-600 leading-relaxed font-medium mb-10 text-lg">
+            <p className="text-stone-100 leading-relaxed font-medium mb-10 text-xl md:text-2xl drop-shadow-lg">
               {aiResult?.reflection}
             </p>
 
             <div className="p-8 bg-stone-50/50 backdrop-blur-sm rounded-[2.5rem] border border-stone-100 flex flex-col gap-4 relative">
               <div className="absolute -left-3 top-8 w-1 h-12 bg-[#D4AF37] rounded-full"></div>
-              <h4 className="text-[10px] uppercase tracking-widest font-black text-[#D4AF37] flex items-center gap-2">
-                <Zap size={14} /> Práctica Recomendada
+              <h4 className="text-xs uppercase tracking-widest font-black text-[#D4AF37] flex items-center gap-2 bg-[#D4AF37]/10 px-4 py-2 rounded-lg w-fit">
+                <Zap size={16} /> Práctica Recomendada
               </h4>
-              <p className="text-stone-700 font-serif italic text-lg leading-relaxed">
+              <p className="text-white font-serif italic text-xl leading-relaxed">
                 {aiResult?.practice}
               </p>
             </div>
@@ -335,28 +335,28 @@ Responde estrictamente en formato JSON plano:
     <div className="max-w-5xl mx-auto py-8 px-4 animate-fade-in">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-3xl font-serif font-bold text-stone-900 italic">Práctica Diaria</h2>
-          <p className="text-[10px] uppercase tracking-widest font-black text-stone-400 mt-1">Conecta. Siente. Libera.</p>
+          <h2 className="text-4xl font-serif font-bold text-white italic">Práctica Diaria</h2>
+          <p className="text-xs uppercase tracking-widest font-black text-[#D4AF37] mt-2">Conecta. Siente. Libera.</p>
         </div>
-        <button onClick={() => setView('history')} className="p-3 bg-white border border-stone-100 rounded-2xl text-stone-400 hover:text-stone-900 transition-all shadow-sm hover:shadow-md flex items-center gap-2 group">
-          <History size={18} className="group-hover:rotate-12 transition-transform" />
-          <span className="text-[10px] font-black uppercase tracking-widest hidden md:block">Historial</span>
+        <button onClick={() => setView('history')} className="p-4 bg-white/5 border border-white/10 rounded-2xl text-stone-300 hover:text-white transition-all shadow-sm hover:shadow-md flex items-center gap-3 group">
+          <History size={20} className="group-hover:rotate-12 transition-transform" />
+          <span className="text-xs font-black uppercase tracking-widest hidden md:block">Historial Sagrado</span>
         </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* Lado Izquierdo: Concepto Central del Día */}
         <div className="lg:sticky lg:top-20">
-          <div className="bg-stone-900 rounded-[3rem] p-10 text-[#FFF9F0] shadow-2xl relative overflow-hidden group">
-            <div className="absolute -right-10 -top-10 w-48 h-48 bg-[#D4AF37]/10 rounded-full blur-[100px] group-hover:scale-110 transition-transform duration-1000"></div>
-            <div className="relative z-10">
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#D4AF37] block mb-4">Lección {dayOfYear}</span>
-              <h3 className="text-2xl font-serif font-bold italic mb-8 leading-tight">
+          <div className="bg-black/40 backdrop-blur-3xl rounded-[3rem] p-12 text-[#FFF9F0] border border-white/10 shadow-2xl relative overflow-hidden group">
+            <div className="absolute -right-10 -top-10 w-64 h-64 bg-[#D4AF37]/10 rounded-full blur-[120px] group-hover:scale-110 transition-transform duration-1000"></div>
+            <div className="relative z-10 space-y-6">
+              <span className="text-xs font-black uppercase tracking-[0.4em] text-[#D4AF37] block">Lección {dayOfYear}</span>
+              <h3 className="text-3xl md:text-4xl font-serif font-bold italic leading-tight text-white drop-shadow-xl">
                 {lessonParts.concept}
               </h3>
-              <div className="h-[1px] w-full bg-white/10 mb-8"></div>
-              <p className="text-white/40 text-[10px] uppercase font-black tracking-widest leading-relaxed">
-                Este concepto es la brújula para tu día. Dejá que resuene antes de expresar tu sentir a la derecha.
+              <div className="h-[2px] w-20 bg-[#D4AF37]/40"></div>
+              <p className="text-stone-300 text-sm italic font-medium leading-relaxed">
+                Este concepto es tu brújula sagrada. Dejá que resuene en tu silencio antes de expresar tu sentir.
               </p>
             </div>
           </div>
@@ -367,8 +367,8 @@ Responde estrictamente en formato JSON plano:
           <SacredCard className="!p-8 md:!p-12">
             <div className="space-y-8">
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-[#D4AF37] mb-4 flex items-center gap-2">
-                  <MessageSquare size={12} /> ¿Qué está afectando tu paz hoy?
+                <label className="block text-xs font-black uppercase tracking-widest text-[#D4AF37] mb-6 flex items-center gap-2">
+                  <MessageSquare size={14} /> ¿Qué está afectando tu paz hoy?
                 </label>
                 <textarea 
                   value={userInput}
@@ -379,8 +379,8 @@ Responde estrictamente en formato JSON plano:
               </div>
 
               <div className="relative">
-                <label className="block text-[10px] font-black uppercase tracking-widest text-[#D4AF37] mb-4 flex items-center gap-2">
-                  <Activity size={12} /> ¿Qué sentimiento predomina ahora?
+                <label className="block text-xs font-black uppercase tracking-widest text-[#D4AF37] mb-6 flex items-center gap-2">
+                  <Activity size={14} /> ¿Qué sentimiento predomina ahora?
                 </label>
                 
                 <button 
@@ -390,11 +390,11 @@ Responde estrictamente en formato JSON plano:
                   <div className="flex items-center gap-3">
                     {selectedFeeling ? (
                       <>
-                        <span className="text-2xl">{selectedFeeling.emoji}</span>
-                        <span className="font-bold text-stone-100">{selectedFeeling.display_name}</span>
+                        <span className="text-3xl">{selectedFeeling.emoji}</span>
+                        <span className="text-lg font-bold text-white">{selectedFeeling.display_name}</span>
                       </>
                     ) : (
-                      <span className="text-stone-400 font-bold">Seleccioná un sentimiento...</span>
+                      <span className="text-stone-500 font-bold text-sm uppercase tracking-widest">Seleccioná un sentimiento...</span>
                     )}
                   </div>
                   <ChevronDown size={18} className={`text-stone-300 group-hover:text-[#D4AF37] transition-transform ${showFeelingsDropdown ? 'rotate-180' : ''}`} />
@@ -433,8 +433,8 @@ Responde estrictamente en formato JSON plano:
 function InsightItem({ text }: { text: string }) {
   return (
     <div className="flex gap-4 items-start group">
-      <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] mt-2 group-hover:scale-150 transition-transform"></div>
-      <p className="text-stone-400 text-sm leading-relaxed group-hover:text-white transition-colors">{text}</p>
+      <div className="w-2 h-2 rounded-full bg-[#D4AF37] mt-2 group-hover:scale-150 transition-transform shadow-[0_0_10px_rgba(212,175,55,0.4)]"></div>
+      <p className="text-stone-200 text-base leading-relaxed group-hover:text-white transition-colors">{text}</p>
     </div>
   );
 }
@@ -442,7 +442,7 @@ function InsightItem({ text }: { text: string }) {
 function FeelingGroup({ title, icon, list, onSelect, selectedId }: { title: string, icon: string, list: Feeling[], onSelect: (f: Feeling) => void, selectedId?: string }) {
   return (
     <div className="mb-2 last:mb-0">
-      <h4 className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-3 px-2">
+      <h4 className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-4 px-2">
         {icon} {title}
       </h4>
       <div className="grid grid-cols-2 gap-2">
@@ -466,12 +466,12 @@ function ActionButton({ icon, label, onClick, primary, disabled }: { icon: React
     <button 
       onClick={onClick}
       disabled={disabled}
-      className={`flex flex-col items-center justify-center gap-2 p-4 rounded-3xl transition-all ${primary ? 'bg-stone-900 text-[#D4AF37] shadow-xl hover:scale-105' : 'bg-stone-50 text-stone-400 hover:bg-white hover:text-stone-900 hover:shadow-md'} ${disabled ? 'opacity-50 cursor-not-allowed scale-100' : ''}`}
+      className={`flex flex-col items-center justify-center gap-3 p-6 rounded-[2.5rem] transition-all border border-white/5 ${primary ? 'bg-[#D4AF37] text-white shadow-2xl hover:scale-105' : 'bg-white/5 text-stone-400 hover:text-white hover:border-white/20 hover:shadow-md'} ${disabled ? 'opacity-50 cursor-not-allowed scale-100' : ''}`}
     >
-      <div className={`${primary ? 'bg-[#D4AF37]/20' : 'bg-white'} p-3 rounded-2xl`}>
+      <div className={`${primary ? 'bg-white/20' : 'bg-[#D4AF37]/10'} p-4 rounded-2xl text-inherit`}>
         {icon}
       </div>
-      <span className="text-[10px] font-black uppercase tracking-widest">{label}</span>
+      <span className="text-xs font-black uppercase tracking-widest">{label}</span>
     </button>
   );
 }
@@ -480,9 +480,9 @@ import { EmotionalHeatMap } from './EmotionalHeatMap';
 
 function StatCard({ label, value, color }: { label: string, value: string, color: string }) {
   return (
-    <div className="bg-stone-50 p-6 rounded-3xl border border-stone-100 flex flex-col gap-1 items-center md:items-start transition-all hover:bg-white hover:shadow-md group">
-      <span className="text-[10px] font-black uppercase tracking-widest text-stone-300 group-hover:text-[#D4AF37] transition-colors">{label}</span>
-      <span className={`text-2xl font-serif font-black ${color}`}>{value}</span>
+    <div className="bg-white/5 p-8 rounded-[2.5rem] border border-white/10 flex flex-col gap-2 items-center md:items-start transition-all hover:bg-white/10 hover:shadow-lg group">
+      <span className="text-xs font-black uppercase tracking-widest text-[#D4AF37] group-hover:opacity-100 transition-opacity">{label}</span>
+      <span className={`text-3xl font-serif font-black ${color} drop-shadow-sm`}>{value}</span>
     </div>
   );
 }

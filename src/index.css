@@ -8,9 +8,9 @@
 
   /* Inmersión Atmosférica */
   --bg-atmosphere: url('/assets/bg-portal.png');
-  --glass-bg: rgba(12, 10, 9, 0.4);
-  --glass-border: rgba(212, 175, 55, 0.15);
-  --glass-blur: blur(32px);
+  --glass-bg: rgba(12, 10, 9, 0.7);
+  --glass-border: rgba(212, 175, 55, 0.3);
+  --glass-blur: blur(40px);
   
   --color-gold: #D4AF37;
   --color-gold-glow: rgba(212, 175, 55, 0.4);
@@ -60,14 +60,14 @@ body::before {
 .animate-fade-out { animation: fadeOut 0.4s ease-in forwards; }
 
 .glass {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .glass-dark {
-  background: rgba(28, 25, 23, 0.85);
+  background: rgba(28, 25, 23, 0.95);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -116,7 +116,8 @@ body::before {
   -webkit-text-fill-color: transparent;
   font-weight: 900;
   letter-spacing: 0.1em;
-  filter: drop-shadow(0 0 8px var(--color-gold-glow));
+  filter: drop-shadow(0 0 12px var(--color-gold-glow));
+  text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
 }
 
 .text-mystic {

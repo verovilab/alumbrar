@@ -65,23 +65,23 @@ export function HomeView({
       <section className="px-2">
         <SacredCard glow className="text-center py-16">
           <Sparkles className="mx-auto text-[#D4AF37] mb-8" size={40} />
-          <h2 className="text-2xl md:text-3xl font-serif italic text-stone-900 dark:text-stone-100 leading-relaxed mb-10 px-4">
+          <h2 className="text-3xl md:text-5xl font-serif italic text-[#F5F5F4] leading-relaxed mb-12 px-6 drop-shadow-2xl">
             "{quote}"
           </h2>
-          <div className="flex items-center justify-center gap-4">
-            <div className="h-[1px] w-12 bg-[#D4AF37]/20"></div>
-            <span className="text-[10px] uppercase tracking-[0.4em] text-[#D4AF37] font-black">Sintonía Sagrada</span>
-            <div className="h-[1px] w-12 bg-[#D4AF37]/20"></div>
+          <div className="flex items-center justify-center gap-6">
+            <div className="h-[1px] w-16 bg-[#D4AF37]/30"></div>
+            <span className="text-xs uppercase tracking-[0.4em] text-[#D4AF37] font-black underline underline-offset-8 decoration-[#D4AF37]/20">Sintonía Sagrada</span>
+            <div className="h-[1px] w-16 bg-[#D4AF37]/30"></div>
           </div>
         </SacredCard>
       </section>
 
       {/* 3. EL RITUAL PASO A PASO */}
       <section className="space-y-6">
-        <div className="flex items-center gap-3 px-4">
-          <div className="h-[1px] flex-1 bg-stone-100 dark:bg-stone-800"></div>
-          <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-stone-400">Tu Camino de Hoy</h3>
-          <div className="h-[1px] flex-1 bg-stone-100 dark:bg-stone-800"></div>
+        <div className="flex items-center gap-4 px-4">
+          <div className="h-[1px] flex-1 bg-white/10"></div>
+          <h3 className="text-xs font-black uppercase tracking-[0.4em] text-[#D4AF37] opacity-80">Tu Camino de Hoy</h3>
+          <div className="h-[1px] flex-1 bg-white/10"></div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-2">
@@ -147,18 +147,18 @@ function StepButton({ title, desc, icon, completed, onClick }: { title: string, 
         {icon}
       </div>
       
-      <div className="space-y-1">
-        <h4 className={`text-sm md:text-base font-bold transition-colors ${completed ? 'text-[#D4AF37]' : 'text-stone-900 dark:text-stone-100'}`}>
+      <div className="space-y-2">
+        <h4 className={`text-lg md:text-xl font-bold transition-colors ${completed ? 'text-[#D4AF37]' : 'text-[#F5F5F4]'}`}>
           {title}
         </h4>
-        <p className="text-[10px] md:text-xs text-stone-400 font-medium uppercase tracking-widest">{desc}</p>
+        <p className="text-xs md:text-sm text-stone-300 font-medium uppercase tracking-widest opacity-80">{desc}</p>
       </div>
 
       <div className="mt-8 flex justify-end">
         {completed ? (
-          <div className="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 px-4 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest">Completado ✨</div>
+          <div className="bg-emerald-500/20 text-emerald-300 px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-500/30">Completado ✨</div>
         ) : (
-          <ArrowRight className="text-stone-200 group-hover:translate-x-1 group-hover:text-[#D4AF37] transition-all" size={20} />
+          <ArrowRight className="text-[#D4AF37]/60 group-hover:translate-x-1 group-hover:text-[#D4AF37] transition-all" size={24} />
         )}
       </div>
     </button>

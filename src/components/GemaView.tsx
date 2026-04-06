@@ -125,13 +125,12 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
 
   return (
     <div className={`space-y-6 transition-all duration-400 ${isFading ? 'animate-fade-out' : 'animate-fade-in'}`}>
-      {/* Selector de Categorías */}
-      <div className="space-y-4 pt-2">
-        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-stone-300">Filtrar por faceta</h4>
+      <div className="space-y-4 pt-4">
+        <h4 className="text-xs font-black uppercase tracking-[0.4em] text-[#D4AF37]">Filtrar por faceta</h4>
         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
           <button 
             onClick={() => handleNextWithFade()} 
-            className={`px-5 py-3 rounded-full text-[10px] font-bold transition-all border ${!currentGema.category ? 'bg-stone-900 text-[#D4AF37] border-stone-900' : 'bg-white text-stone-500 border-stone-100 hover:border-stone-200'}`}
+            className={`px-5 py-3 rounded-full text-xs font-bold transition-all border ${!currentGema.category ? 'bg-[#D4AF37] text-white border-[#D4AF37]' : 'bg-white/5 text-stone-300 border-white/10 hover:border-white/20'}`}
           >
             Todas
           </button>
@@ -139,7 +138,7 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
             <button 
               key={cat} 
               onClick={() => handleNextWithFade(cat)} 
-              className={`px-5 py-3 rounded-full text-[10px] font-bold transition-all border ${currentGema.category === cat ? 'bg-stone-900 text-[#D4AF37] border-stone-900' : 'bg-white text-stone-500 border-stone-100 hover:border-stone-200'}`}
+              className={`px-5 py-3 rounded-full text-xs font-bold transition-all border ${currentGema.category === cat ? 'bg-[#D4AF37] text-white border-[#D4AF37]' : 'bg-white/5 text-stone-300 border-white/10 hover:border-white/20'}`}
             >
               {cat}
             </button>
@@ -149,10 +148,10 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-stone-900 rounded-full flex items-center justify-center text-[#D4AF37]">
-            <GemaIcon size={14} />
+          <div className="w-10 h-10 bg-[#D4AF37]/20 rounded-full flex items-center justify-center text-[#D4AF37] shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+            <GemaIcon size={18} />
           </div>
-          <h3 className="text-lg font-serif font-bold text-stone-900">{currentGema.category || "Inspiración"}</h3>
+          <h3 className="text-2xl font-serif font-bold text-white italic">{currentGema.category || "Inspiración"}</h3>
         </div>
         <div className="flex items-center gap-2">
           <button 
@@ -178,26 +177,26 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
         <Quote className="text-stone-900/5 absolute top-8 left-6 -z-10" size={80} />
         
         <div className="lg:sticky lg:top-24">
-          <div className="sacred-card p-10 text-stone-800 shadow-2xl relative overflow-hidden group border-stone-200/50">
-            <div className="absolute -right-10 -top-10 w-48 h-48 bg-[#D4AF37]/5 rounded-full blur-[100px] group-hover:scale-110 transition-transform duration-1000"></div>
-            <p className="text-xl font-serif italic text-stone-900 leading-snug mb-4">"{currentGema.phrase}"</p>
-            <p className="text-[10px] text-stone-400 font-bold uppercase tracking-[0.2em]">— {currentGema.author || "Un Curso de Milagros"}</p>
+          <div className="sacred-card p-12 text-stone-100 shadow-2xl relative overflow-hidden group border-white/10">
+            <div className="absolute -right-10 -top-10 w-48 h-48 bg-[#D4AF37]/10 rounded-full blur-[100px] group-hover:scale-110 transition-transform duration-1000"></div>
+            <p className="text-2xl md:text-3xl font-serif italic text-white leading-snug mb-6">"{currentGema.phrase}"</p>
+            <p className="text-xs text-stone-300 font-bold uppercase tracking-[0.3em]">— {currentGema.author || "Un Curso de Milagros"}</p>
           </div>
         </div>
         
         <div className="space-y-8">
           {currentGema.idea && (
             <div>
-              <span className="text-[9px] font-black uppercase tracking-widest text-[#D4AF37] block mb-2">Idea Guía</span>
-              <p className="text-sm text-stone-600 leading-relaxed">{currentGema.idea}</p>
+              <span className="text-xs font-black uppercase tracking-widest text-[#D4AF37] block mb-2">Idea Guía</span>
+              <p className="text-base text-stone-200 leading-relaxed font-medium">{currentGema.idea}</p>
             </div>
           )}
           {currentGema.action && (
             <div className={`p-6 rounded-2xl border transition-all duration-700 ${isTimerRunning ? 'bg-stone-900 border-stone-800 shadow-2xl scale-[1.02]' : showDone ? 'bg-green-50 border-green-100' : 'bg-stone-50 border-stone-100'}`}>
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Zap size={14} className={isTimerRunning ? "text-[#D4AF37] animate-pulse" : "text-[#D4AF37]"} />
-                  <span className={`text-[9px] font-black uppercase tracking-widest ${isTimerRunning ? 'text-stone-300' : 'text-stone-900'}`}>{isTimerRunning ? 'Practicando...' : 'Microacción'}</span>
+                  <Zap size={16} className={isTimerRunning ? "text-[#D4AF37] animate-pulse" : "text-[#D4AF37]"} />
+                  <span className={`text-xs font-black uppercase tracking-widest ${isTimerRunning ? 'text-[#D4AF37]' : 'text-white'}`}>{isTimerRunning ? 'Practicando...' : 'Microacción'}</span>
                 </div>
                 {showDone && <CheckCircle size={14} className="text-green-500 animate-bounce" />}
                 {!isTimerRunning && !showDone && (
@@ -246,9 +245,9 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
             </div>
           )}
           {currentGema.mantra && !isTimerRunning && (
-            <div className="pt-4 border-t border-stone-50">
-              <span className="text-[9px] font-black uppercase tracking-widest text-stone-300 block mb-1">Mantra del día</span>
-              <p className="text-xs font-serif italic text-stone-400">"{currentGema.mantra}"</p>
+            <div className="pt-6 border-t border-white/10">
+              <span className="text-xs font-black uppercase tracking-widest text-[#D4AF37] block mb-2">Mantra del día</span>
+              <p className="text-sm font-serif italic text-stone-300">"{currentGema.mantra}"</p>
             </div>
           )}
         </div>

@@ -21,30 +21,30 @@ export function LandingView({ onShowAuth, onGuestAccess }: LandingViewProps) {
 
       {/* Hero Section */}
       <div className="w-full max-w-5xl px-6 py-20 flex flex-col items-center text-center space-y-10 animate-fade-up">
-        <div className="w-24 h-24 rounded-full bg-[#D4AF37] flex items-center justify-center shadow-[0_0_50px_rgba(212,175,55,0.3)] animate-pulse-slow">
+      <div className="w-24 h-24 rounded-full bg-[#D4AF37] flex items-center justify-center shadow-[0_0_60px_rgba(212,175,55,0.4)] animate-pulse-slow">
            <GemaIcon size={40} className="text-white" />
         </div>
         <div className="space-y-4">
-          <h1 className="text-5xl md:text-8xl font-serif italic gold-text tracking-tighter">Alumbrar</h1>
-          <p className="text-[10px] md:text-sm text-[#D4AF37] uppercase tracking-[0.6em] font-black opacity-80 decoration-stone-500 underline-offset-8 underline">Santuario de Paz Interior</p>
+          <h1 className="text-6xl md:text-9xl font-serif italic gold-text tracking-tighter drop-shadow-2xl">Alumbrar</h1>
+          <p className="text-xs md:text-base text-[#D4AF37] uppercase tracking-[0.6em] font-black opacity-100 decoration-[#D4AF37]/40 underline-offset-8 underline">Santuario de Paz Interior</p>
         </div>
         
-        <p className="text-stone-300 max-w-xl font-medium leading-relaxed italic font-serif text-lg md:text-xl">
-          "Un espacio de quietud diseñado para acompañar tu despertar en <span className="text-white/90">Un Curso de Milagros</span>."
+        <p className="text-stone-100 max-w-xl font-medium leading-relaxed italic font-serif text-xl md:text-2xl drop-shadow-lg">
+          "Un espacio de quietud diseñado para acompañar tu despertar en <span className="text-[#D4AF37]">Un Curso de Milagros</span>."
         </p>
 
         <div className="flex flex-col md:flex-row gap-4 w-full max-w-md">
           <button 
             onClick={onShowAuth}
-            className="flex-1 px-8 py-5 bg-[#D4AF37] text-white rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-4 group"
+            className="flex-1 px-8 py-5 bg-[#D4AF37] text-white rounded-[2rem] font-black uppercase tracking-widest text-sm shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-4 group"
           >
             Iniciar Viaje <ArrowRight className="group-hover:translate-x-2 transition-transform" />
           </button>
           <button 
             onClick={onGuestAccess}
-            className="flex-1 px-8 py-5 sacred-card text-stone-200 rounded-[2rem] font-black uppercase tracking-widest text-xs hover:bg-white/5 transition-all border-[#D4AF37]/20 flex items-center justify-center gap-4 group"
+            className="flex-1 px-8 py-5 sacred-card text-white rounded-[2rem] font-black uppercase tracking-widest text-sm hover:bg-white/10 transition-all border-[#D4AF37]/40 flex items-center justify-center gap-4 group shadow-xl"
           >
-            Invitado <Sparkles size={16} className="text-[#D4AF37]" />
+            Invitado <Sparkles size={18} className="text-[#D4AF37]" />
           </button>
         </div>
       </div>
@@ -95,11 +95,11 @@ export function LandingView({ onShowAuth, onGuestAccess }: LandingViewProps) {
 
 function LandingFeature({ icon, title, desc }: { icon: React.ReactNode, title: string, desc: string }) {
   return (
-    <div className="bg-white/5 backdrop-blur-lg border border-white/10 p-10 rounded-[3rem] space-y-4 hover:bg-white/10 transition-all group overflow-hidden relative">
-      <div className="absolute -right-6 -top-6 w-24 h-24 bg-[#D4AF37]/5 rounded-full blur-2xl group-hover:scale-150 transition-transform"></div>
+    <div className="bg-black/60 backdrop-blur-2xl border border-white/10 p-10 rounded-[3rem] space-y-6 hover:bg-black/80 transition-all group overflow-hidden relative shadow-2xl">
+      <div className="absolute -right-6 -top-6 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-3xl group-hover:scale-150 transition-transform"></div>
       <div className="text-[#D4AF37] mb-2">{icon}</div>
-      <h3 className="text-xl font-bold font-serif text-white italic">{title}</h3>
-      <p className="text-sm text-stone-400 leading-relaxed">{desc}</p>
+      <h3 className="text-2xl font-bold font-serif text-white italic">{title}</h3>
+      <p className="text-base text-stone-300 leading-relaxed font-medium">{desc}</p>
     </div>
   )
 }
