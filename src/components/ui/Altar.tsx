@@ -18,7 +18,7 @@ export function Altar({ steps, activeStep }: AltarProps) {
   return (
     <div className="relative py-12 flex flex-col items-center">
       {/* Visual Altar Core */}
-      <div className="relative w-48 h-48 md:w-64 md:h-64 flex items-center justify-center">
+      <div className="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center">
         {/* Outer Glow Halo */}
         <div className={`absolute inset-0 rounded-full blur-[70px] transition-all duration-1000 opacity-80 ${progress === 100 ? 'bg-[#D4AF37] scale-150' : 'bg-black/60 scale-110'}`} />
         
@@ -44,7 +44,7 @@ export function Altar({ steps, activeStep }: AltarProps) {
         {/* Floating Steps / Orbs */}
         {steps.map((step, i) => {
           const angle = (i / steps.length) * 2 * Math.PI - Math.PI / 2;
-          const radius = 100;
+          const radius = 135;
           const x = Math.cos(angle) * radius;
           const y = Math.sin(angle) * radius;
 
