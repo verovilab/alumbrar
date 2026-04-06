@@ -25,8 +25,8 @@ export function LandingView({ onShowAuth, onGuestAccess }: LandingViewProps) {
            <GemaIcon size={40} className="text-white" />
         </div>
         <div className="space-y-4">
-          <h1 className="text-6xl md:text-9xl font-serif italic gold-text tracking-tighter drop-shadow-2xl">Alumbrar</h1>
-          <p className="text-xs md:text-base text-[#D4AF37] uppercase tracking-[0.6em] font-black opacity-100 decoration-[#D4AF37]/40 underline-offset-8 underline">Santuario de Paz Interior</p>
+          <h1 className="text-6xl md:text-9xl font-serif italic gold-text tracking-tighter drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)]">Alumbrar</h1>
+          <p className="text-xs md:text-base text-[#D4AF37] uppercase tracking-[0.6em] font-black opacity-100 decoration-[#D4AF37]/40 underline-offset-8 underline drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">Santuario de Paz Interior</p>
         </div>
         
         <p className="text-stone-100 max-w-xl font-medium leading-relaxed italic font-serif text-xl md:text-2xl drop-shadow-lg">
