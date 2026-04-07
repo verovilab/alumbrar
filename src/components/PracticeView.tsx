@@ -106,6 +106,13 @@ export function PracticeView({ userId, dayOfYear, lessonContent, setRitualState,
   const handleReceiveGuia = async () => {
     if (!selectedFeeling || isGenerating) return;
     setIsGenerating(true);
+
+    if (!apiKey) {
+      alert("🕊️ La llave del Portal (API Key) no está configurada. Si estás en Vercel, agrégala en la configuración con el nombre VITE_GEMINI_API_KEY.");
+      setIsGenerating(false);
+      return;
+    }
+
     try {
       const { data: preGenerated, error: dbError } = await supabase
         .from('lesson_reflections')
@@ -125,7 +132,7 @@ export function PracticeView({ userId, dayOfYear, lessonContent, setRitualState,
       }
 
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       
       const concepto = lessonParts.concept;
       const prompt = `Actúa como un místico compasivo experto en "Un Curso de Milagros".
@@ -169,9 +176,9 @@ Responde estrictamente en formato JSON plano:
       
       setAiResult(parsed);
       setView('reflection');
-    } catch (error) {
+    } catch (error: any) {
       console.error("Guía Error Details:", error);
-      alert("🕊️ El Guía está en silencio por un momento. Por favor, verificá tu conexión o intentá de nuevo en unos segundos.");
+      alert(`🕊️ El Guía está en silencio por un momento. Error: ${error.message || "Problema de conexión o límite de cuota."}`);
     } finally {
       setIsGenerating(false);
     }
@@ -216,7 +223,20 @@ Responde estrictamente en formato JSON plano:
 
   if (view === 'history') {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8 animate-fade-in pb-32">
+      <div className="max-w-5xl mx-auto py-8 px-4 animate-fade-in !overflow-visible pb-60">
+        <div className="flex items-center gap-4 mb-10">
+          <button 
+            onClick={() => onSetTab('home')}
+            className="p-3 bg-white/5 rounded-full text-stone-400 hover:text-[#D4AF37] transition-all"
+          >
+            <ChevronLeft size={20} />
+          </button>
+          <div>
+            <h2 className="text-2xl font-serif italic text-white leading-none mb-1">Práctica Diaria</h2>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-[#D4AF37]">Conecta. Siente. Libera.</p>
+          </div>
+        </div>
+
         <div className="flex justify-between items-center mb-10">
           <div>
             <h2 className="text-3xl font-serif font-bold text-white italic">Tu Viaje Emocional</h2>
