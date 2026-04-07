@@ -107,12 +107,14 @@ export function PracticeView({ userId, dayOfYear, lessonContent, setRitualState,
     if (!selectedFeeling || isGenerating) return;
     
     if (!apiKey) {
-      alert("🕊️ La API Key no está configurada. Por favor checkeá Vercel o tu .env.local");
+      alert("🕊️ La llave del Portal (API Key) no está configurada. Si estás en Vercel, agrégala en la configuración con el nombre VITE_GEMINI_API_KEY.");
+      setIsGenerating(false);
       return;
     }
 
     setIsGenerating(true);
     try {
+      // Intentar cargar de caché primero
       const { data: preGenerated, error: dbError } = await supabase
         .from('lesson_reflections')
         .select('reflection, practice')
@@ -131,35 +133,32 @@ export function PracticeView({ userId, dayOfYear, lessonContent, setRitualState,
       }
 
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-3-flash' });
+      const model = genAI.getGenerativeModel({ 
+        model: 'gemini-2.5-flash',
+        systemInstruction: `Eres 'El Guía' de Alumbrar, un místico soberano experto en Un Curso de Milagros (UCDM).
+        
+        TU MISIÓN:
+        Transformar la percepción del alumno desde el miedo (ego) hacia el amor (espíritu) usando la lección del día como puente.
+        
+        TONO Y ESTILO:
+        - Sagrado pero Moderno.
+        - Unifica la dulzura del místico con la autoridad radical del maestro de UCDM.
+        - Usa un lenguaje que evoque paz, luz y liberación.`
+      });
       
-      const concepto = lessonParts.concept;
-      const prompt = `Actúa como un místico compasivo experto en "Un Curso de Milagros".
-
-CONTEXTO:
-- Lección: ${dayOfYear}
-- Concepto Central: ${concepto}
-- Sentimiento del usuario: ${selectedFeeling.display_name} (${selectedFeeling.category})
-- Input opcional: ${userInput || "No proporcionado"}
+      const prompt = `CONTEXTO SAGRADO:
+- Lección del día: ${dayOfYear}
+- Concepto Central: "${lessonParts.concept}"
+- Sentir actual del alumno: "${selectedFeeling.display_name}" (${selectedFeeling.category})
+- Nota del alumno: "${userInput || "Entregado al silencio"}"
 
 TAREA:
-Genera una reflexión personalizada de 100-150 palabras que:
-1. Reconozca el sentimiento con empatía profunda (sin juzgar)
-2. Conecte ese sentimiento específico con la enseñanza de esta lección
-3. Ofrezca una perspectiva liberadora desde la filosofía de UCDM
-4. Termine con esperanza clara y dirección práctica
-5. Use terminología auténtica de UCDM: Ego, Espíritu Santo, Milagro, Expiación, Hijo de Dios, Percepción Verdadera
+Genera una respuesta en formato JSON con dos campos:
+1. "reflection": Una reflexión profunda (100-150 palabras) que reconozca el sentir del alumno sin juzgarlo, lo disuelva en la verdad de la lección de hoy y ofrezca la Percepción Verdadera. Usa términos como Espíritu Santo, Milagro, Expiación o Hijo de Dios de forma orgánica.
+2. "practice": Una práctica concreta y breve (60-90 segundos) de respiración, visualización o afirmación específica para transmutar este sentimiento hoy.
 
-ADEMÁS, genera una PRÁCTICA de 60-120 segundos que:
-- Sea específica para este sentimiento + esta lección
-- Incluya respiración, visualización, afirmación o acción concreta
-
-FORMATO DE SALIDA (ESTRICTO JSON):
-Responde solo con el objeto JSON, sin texto previo ni posterior:
-{
-  "reflection": "tu reflexión aquí",
-  "practice": "tu práctica aquí"
-}`;
+FORMATO DE SALIDA (JSON ESTRICTO):
+{"reflection": "texto", "practice": "texto"}`;
 
       const result = await model.generateContent(prompt);
       const response = await result.response;
@@ -172,14 +171,14 @@ Responde solo con el objeto JSON, sin texto previo ni posterior:
       const parsed = JSON.parse(jsonStr);
       
       if (!parsed.reflection || !parsed.practice) {
-        throw new Error("Respuesta incompleta del Guía.");
+        throw new Error("La respuesta del portal está incompleta.");
       }
       
       setAiResult(parsed);
       setView('reflection');
     } catch (error: any) {
-      console.error("Guía Error:", error);
-      alert(`🕊️ El Guía está en silencio: ${error.message || "Error desconocido"}`);
+      console.error("Guía Error Details:", error);
+      alert(`🕊️ El Guía está en un momento de profundo silencio (Error API). Inténtalo más tarde.`);
     } finally {
       setIsGenerating(false);
     }
@@ -222,23 +221,35 @@ Responde solo con el objeto JSON, sin texto previo ni posterior:
     };
   }, [feelings]);
 
-  if (view === 'history') {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-8 animate-fade-in pb-32">
-        <div className="flex items-center gap-4 mb-10">
-          <button 
-            onClick={() => onSetTab('home')}
-            className="p-3 bg-white/5 rounded-full text-stone-400 hover:text-[#D4AF37] transition-all"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <div>
-            <h2 className="text-2xl font-serif italic text-white leading-none mb-1">Práctica Diaria</h2>
-            <p className="text-[10px] uppercase tracking-[0.3em] text-[#D4AF37]">Historial Sagrado</p>
-          </div>
-        </div>
-        
-        <div className="space-y-8">
+  const renderHeader = () => (
+    <div className="flex items-center gap-4 mb-10 animate-fade-in">
+      <button 
+        onClick={() => {
+          if (view === 'practice') onSetTab('home');
+          else setView('practice');
+        }}
+        className="p-3 bg-white/5 rounded-full text-stone-400 hover:text-[#D4AF37] transition-all border border-white/5 hover:bg-white/10"
+        title={view === 'practice' ? "Volver al inicio" : "Volver a la selección"}
+      >
+        <ChevronLeft size={20} />
+      </button>
+      <div>
+        <h2 className="text-2xl font-serif italic text-white leading-none mb-1">
+          {view === 'history' ? 'Historial Sagrado' : 'Práctica Diaria'}
+        </h2>
+        <p className="text-[10px] uppercase tracking-[0.3em] text-[#D4AF37]">
+          {view === 'history' ? 'Tus huellas en la luz' : 'Conecta. Siente. Libera.'}
+        </p>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="max-w-5xl mx-auto py-8 px-4 !overflow-visible pb-60">
+      {renderHeader()}
+
+      {view === 'history' ? (
+        <div className="max-w-4xl mx-auto animate-fade-in">
           <div className="bg-white rounded-[3rem] p-10 shadow-2xl border border-stone-50 overflow-hidden relative">
             <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
                <Calendar size={180} className="text-stone-900" />
@@ -246,132 +257,107 @@ Responde solo con el objeto JSON, sin texto previo ni posterior:
             <EmotionalHeatMap userId={userId} showInsights={true} />
           </div>
         </div>
-      </div>
-    );
-  }
-
-  if (view === 'reflection') {
-    return (
-      <div className="max-w-2xl mx-auto px-4 py-8 animate-fade-up">
-        <button onClick={() => setView('practice')} className="mb-6 text-[10px] font-black uppercase tracking-widest text-stone-400 hover:text-stone-900 flex items-center gap-2 transition-colors">
-          <ChevronLeft size={14} /> Reajustar sentimiento
-        </button>
-        <div className="space-y-6">
-          <SacredCard glow className="relative overflow-hidden">
-            <div className="flex items-center gap-3 mb-8">
-              <span className="w-10 h-10 bg-stone-900 text-[#D4AF37] rounded-2xl flex items-center justify-center shadow-lg">
-                <Sparkles size={18} />
-              </span>
-              <div>
-                <h3 className="text-2xl font-bold font-serif text-white italic">Tu Reflexión del Día</h3>
-                <span className="text-xs uppercase tracking-widest text-[#D4AF37] font-black">Guía personalizada</span>
+      ) : view === 'reflection' ? (
+        <div className="max-w-2xl mx-auto animate-fade-up">
+          <div className="space-y-6">
+            <SacredCard glow className="relative overflow-hidden">
+              <div className="flex items-center gap-3 mb-8">
+                <span className="w-10 h-10 bg-stone-900 text-[#D4AF37] rounded-2xl flex items-center justify-center shadow-lg">
+                  <Sparkles size={18} />
+                </span>
+                <div>
+                  <h3 className="text-2xl font-bold font-serif text-white italic">Tu Reflexión del Día</h3>
+                  <span className="text-xs uppercase tracking-widest text-[#D4AF37] font-black">Guía personalizada</span>
+                </div>
               </div>
-            </div>
-            <p className="text-stone-100 leading-relaxed font-medium mb-10 text-xl md:text-2xl drop-shadow-lg">{aiResult?.reflection}</p>
-            <div className="p-8 bg-stone-50/50 backdrop-blur-sm rounded-[2.5rem] border border-stone-100 flex flex-col gap-4 relative">
-              <div className="absolute -left-3 top-8 w-1 h-12 bg-[#D4AF37] rounded-full"></div>
-              <h4 className="text-xs uppercase tracking-widest font-black text-[#D4AF37] flex items-center gap-2 bg-[#D4AF37]/10 px-4 py-2 rounded-lg w-fit">
-                <Zap size={16} /> Práctica Recomendada
-              </h4>
-              <p className="text-white font-serif italic text-xl leading-relaxed">{aiResult?.practice}</p>
-            </div>
-            <div className="mt-10 grid grid-cols-2 gap-4">
-               <ActionButton icon={<Activity size={16} />} label="Guardar registro" onClick={handleSave} primary disabled={isSaving} />
-               <ActionButton icon={<RefreshCw size={16} />} label="Otra mirada" onClick={handleReceiveGuia} disabled={isGenerating} />
-            </div>
-          </SacredCard>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="max-w-5xl mx-auto py-8 px-4 animate-fade-in !overflow-visible pb-60">
-      {/* Header with Back Button */}
-      <div className="flex items-center gap-4 mb-10">
-        <button 
-          onClick={() => onSetTab('home')}
-          className="p-3 bg-white/5 rounded-full text-stone-400 hover:text-[#D4AF37] transition-all"
-        >
-          <ChevronLeft size={20} />
-        </button>
-        <div>
-          <h2 className="text-2xl font-serif italic text-white leading-none mb-1">Práctica Diaria</h2>
-          <p className="text-[10px] uppercase tracking-[0.3em] text-[#D4AF37]">Conecta. Siente. Libera.</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start !overflow-visible">
-        <div className="lg:sticky lg:top-20">
-          <div className="bg-black/40 backdrop-blur-3xl rounded-[3rem] p-12 text-[#FFF9F0] border border-white/10 shadow-2xl relative overflow-hidden group">
-            <div className="absolute -right-10 -top-10 w-64 h-64 bg-[#D4AF37]/10 rounded-full blur-[120px] group-hover:scale-110 transition-transform duration-1000"></div>
-            <div className="relative z-10 space-y-6">
-              <span className="text-xs font-black uppercase tracking-[0.4em] text-[#D4AF37] block">Lección {dayOfYear}</span>
-              <h3 className="text-3xl md:text-4xl font-serif font-bold italic leading-tight text-white drop-shadow-xl">{lessonParts.concept}</h3>
-              <div className="h-[2px] w-20 bg-[#D4AF37]/40"></div>
-              <p className="text-stone-300 text-sm italic font-medium leading-relaxed">Este concepto es tu brújula sagrada. Dejá que resuene en tu silencio antes de expresar tu sentir.</p>
-            </div>
+              <p className="text-stone-100 leading-relaxed font-medium mb-10 text-xl md:text-2xl drop-shadow-lg">{aiResult?.reflection}</p>
+              <div className="p-8 bg-stone-50/50 backdrop-blur-sm rounded-[2.5rem] border border-stone-100 flex flex-col gap-4 relative">
+                <div className="absolute -left-3 top-8 w-1 h-12 bg-[#D4AF37] rounded-full"></div>
+                <h4 className="text-xs uppercase tracking-widest font-black text-[#D4AF37] flex items-center gap-2 bg-[#D4AF37]/10 px-4 py-2 rounded-lg w-fit">
+                  <Zap size={16} /> Práctica Recomendada
+                </h4>
+                <p className="text-white font-serif italic text-xl leading-relaxed">{aiResult?.practice}</p>
+              </div>
+              <div className="mt-10 grid grid-cols-2 gap-4">
+                 <ActionButton icon={<Activity size={16} />} label="Guardar registro" onClick={handleSave} primary disabled={isSaving} />
+                 <ActionButton icon={<RefreshCw size={16} />} label="Otra mirada" onClick={handleReceiveGuia} disabled={isGenerating} />
+              </div>
+            </SacredCard>
           </div>
         </div>
-
-        <div className="space-y-6 !overflow-visible">
-          <SacredCard overflowVisible className="!p-8 md:!p-12 !overflow-visible">
-            <div className="space-y-8 !overflow-visible">
-              <div className="!overflow-visible">
-                <label className="block text-xs font-black uppercase tracking-widest text-[#D4AF37] mb-6 flex items-center gap-2">
-                  <MessageSquare size={14} /> ¿Qué está afectando tu paz hoy?
-                </label>
-                <textarea 
-                  value={userInput}
-                  onChange={(e) => setUserInput(e.target.value)}
-                  placeholder="Escribí aquí lo que hoy ocupa tu mente (opcional)..."
-                  className="w-full min-h-[120px] p-6 rounded-[2rem] bg-stone-900/40 border border-white/10 focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/5 outline-none transition-all text-stone-100 placeholder:text-stone-600 leading-relaxed font-medium backdrop-blur-md"
-                />
-              </div>
-
-              <div className="relative !overflow-visible">
-                <label className="block text-xs font-black uppercase tracking-widest text-[#D4AF37] mb-6 flex items-center gap-2">
-                  <Activity size={14} /> ¿Qué sentimiento predomina ahora?
-                </label>
-                <button 
-                  onClick={() => setShowFeelingsDropdown(!showFeelingsDropdown)}
-                  className={`w-full p-6 rounded-[2rem] transition-all flex items-center justify-between group sacred-card ${selectedFeeling ? 'border-[#D4AF37]/50' : ''}`}
-                >
-                  <div className="flex items-center gap-3">
-                    {selectedFeeling ? (
-                      <>
-                        <span className="text-3xl">{selectedFeeling.emoji}</span>
-                        <span className="text-lg font-bold text-white">{selectedFeeling.display_name}</span>
-                      </>
-                    ) : (
-                      <span className="text-stone-500 font-bold text-sm uppercase tracking-widest">Seleccioná un sentimiento...</span>
-                    )}
-                  </div>
-                  <ChevronDown size={18} className={`text-stone-300 group-hover:text-[#D4AF37] transition-transform ${showFeelingsDropdown ? 'rotate-180' : ''}`} />
-                </button>
-
-                {showFeelingsDropdown && (
-                  <div className="absolute top-full left-0 right-0 mt-4 bg-white/95 backdrop-blur-3xl border border-stone-200 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-[1000] p-6 max-h-[300px] overflow-y-auto custom-scrollbar animate-fade-up">
-                    <div className="space-y-8">
-                      <FeelingGroup title="Expansivos (Luz)" icon="🟢" list={categorizedFeelings.expansivo} onSelect={(f) => { setSelectedFeeling(f); setShowFeelingsDropdown(false); }} selectedId={selectedFeeling?.id} />
-                      <FeelingGroup title="Neutros (Transición)" icon="🟡" list={categorizedFeelings.neutro} onSelect={(f) => { setSelectedFeeling(f); setShowFeelingsDropdown(false); }} selectedId={selectedFeeling?.id} />
-                      <FeelingGroup title="Contractivos (Sombra)" icon="🔴" list={categorizedFeelings.contractivo} onSelect={(f) => { setSelectedFeeling(f); setShowFeelingsDropdown(false); }} selectedId={selectedFeeling?.id} />
-                    </div>
-                  </div>
-                )}
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start !overflow-visible animate-fade-in">
+          <div className="lg:sticky lg:top-20">
+            <div className="bg-black/40 backdrop-blur-3xl rounded-[3rem] p-12 text-[#FFF9F0] border border-white/10 shadow-2xl relative overflow-hidden group">
+              <div className="absolute -right-10 -top-10 w-64 h-64 bg-[#D4AF37]/10 rounded-full blur-[120px] group-hover:scale-110 transition-transform duration-1000"></div>
+              <div className="relative z-10 space-y-6">
+                <span className="text-xs font-black uppercase tracking-[0.4em] text-[#D4AF37] block">Lección {dayOfYear}</span>
+                <h3 className="text-3xl md:text-4xl font-serif font-bold italic leading-tight text-white drop-shadow-xl">{lessonParts.concept}</h3>
+                <div className="h-[2px] w-20 bg-[#D4AF37]/40"></div>
+                <p className="text-stone-300 text-sm italic font-medium leading-relaxed">Este concepto es tu brújula sagrada. Dejá que resuene en tu silencio antes de expresar tu sentir.</p>
               </div>
             </div>
+          </div>
 
-            <button 
-              onClick={handleReceiveGuia}
-              disabled={!selectedFeeling || isGenerating}
-              className={`w-full mt-12 py-6 rounded-[2.5rem] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 shadow-xl ${selectedFeeling && !isGenerating ? 'bg-stone-900 text-[#D4AF37] hover:scale-[1.02] shadow-[#D4AF37]/10' : 'bg-stone-100 text-stone-300 cursor-not-allowed shadow-none'}`}
-            >
-              {isGenerating ? <RefreshCw size={20} className="animate-spin" /> : <>Recibir Guía <Sparkles size={18} /></>}
-            </button>
-          </SacredCard>
+          <div className="space-y-6 !overflow-visible">
+            <SacredCard overflowVisible className="!p-8 md:!p-12 !overflow-visible">
+              <div className="space-y-8 !overflow-visible">
+                <div className="!overflow-visible">
+                  <label className="block text-xs font-black uppercase tracking-widest text-[#D4AF37] mb-6 flex items-center gap-2">
+                    <MessageSquare size={14} /> ¿Qué está afectando tu paz hoy?
+                  </label>
+                  <textarea 
+                    value={userInput}
+                    onChange={(e) => setUserInput(e.target.value)}
+                    placeholder="Escribí aquí lo que hoy ocupa tu mente (opcional)..."
+                    className="w-full min-h-[120px] p-6 rounded-[2rem] bg-stone-900/40 border border-white/10 focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/5 outline-none transition-all text-stone-100 placeholder:text-stone-600 leading-relaxed font-medium backdrop-blur-md"
+                  />
+                </div>
+
+                <div className="relative !overflow-visible">
+                  <label className="block text-xs font-black uppercase tracking-widest text-[#D4AF37] mb-6 flex items-center gap-2">
+                    <Activity size={14} /> ¿Qué sentimiento predomina ahora?
+                  </label>
+                  <button 
+                    onClick={() => setShowFeelingsDropdown(!showFeelingsDropdown)}
+                    className={`w-full p-6 rounded-[2rem] transition-all flex items-center justify-between group sacred-card ${selectedFeeling ? 'border-[#D4AF37]/50' : ''}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      {selectedFeeling ? (
+                        <>
+                          <span className="text-3xl">{selectedFeeling.emoji}</span>
+                          <span className="text-lg font-bold text-white">{selectedFeeling.display_name}</span>
+                        </>
+                      ) : (
+                        <span className="text-stone-500 font-bold text-sm uppercase tracking-widest">Seleccioná un sentimiento...</span>
+                      )}
+                    </div>
+                    <ChevronDown size={18} className={`text-stone-300 group-hover:text-[#D4AF37] transition-transform ${showFeelingsDropdown ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {showFeelingsDropdown && (
+                    <div className="absolute top-full left-0 right-0 mt-4 bg-white/95 backdrop-blur-3xl border border-stone-200 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-[1000] p-6 max-h-[300px] overflow-y-auto custom-scrollbar animate-fade-up">
+                      <div className="space-y-8">
+                        <FeelingGroup title="Expansivos (Luz)" icon="🟢" list={categorizedFeelings.expansivo} onSelect={(f) => { setSelectedFeeling(f); setShowFeelingsDropdown(false); }} selectedId={selectedFeeling?.id} />
+                        <FeelingGroup title="Neutros (Transición)" icon="🟡" list={categorizedFeelings.neutro} onSelect={(f) => { setSelectedFeeling(f); setShowFeelingsDropdown(false); }} selectedId={selectedFeeling?.id} />
+                        <FeelingGroup title="Contractivos (Sombra)" icon="🔴" list={categorizedFeelings.contractivo} onSelect={(f) => { setSelectedFeeling(f); setShowFeelingsDropdown(false); }} selectedId={selectedFeeling?.id} />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <button 
+                onClick={handleReceiveGuia}
+                disabled={!selectedFeeling || isGenerating}
+                className={`w-full mt-12 py-6 rounded-[2.5rem] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-3 shadow-xl ${selectedFeeling && !isGenerating ? 'bg-stone-900 text-[#D4AF37] hover:scale-[1.02] shadow-[#D4AF37]/10' : 'bg-stone-100 text-stone-300 cursor-not-allowed shadow-none'}`}
+              >
+                {isGenerating ? <RefreshCw size={20} className="animate-spin" /> : <>Recibir Guía <Sparkles size={18} /></>}
+              </button>
+            </SacredCard>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -78,28 +78,25 @@ export function useGemini(apiKey: string, userId?: string) {
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ 
-        model: 'gemini-3-flash',
-        systemInstruction: `Eres 'El Guía' de Alumbrar, un mentor espiritual experto en Un Curso de Milagros (UCDM). 
-        
-        TU VOZ Y ROL (Intercala según la necesidad del alumno):
-        1. EL MÍSTICO POÉTICO (Compasión): Cuando el usuario sufre o duda, usa un lenguaje lírico, suave y consolador. Habla de la paz, la luz y la naturaleza ilusoria del dolor.
-        2. EL MAESTRO FIRME (Exigencia Radical): Cuando el usuario justifica al ego o a la culpa, sé directo y firme. No aceptes compromisos con la ilusión. Recuerda que la salvación requiere honestidad total y un perdón radical.
-        
-        PRINCIPIOS:
-        - Respuesta basada estrictamente en la metafísica de UCDM (Ego, Espíritu Santo, El Hijo de Dios, El Milagro).
-        - No eres un psicólogo convencional; eres un puente hacia la Percepción Verdadera.
-        - Usa un tono que transmita autoridad espiritual pero sea accesible.
-        - Evita ser repetitivo o sonar robótico. Sé profundo.`
+        model: 'gemini-2.5-flash',
+        systemInstruction: `Eres 'El Guía' de Alumbrar, un mentor espiritual soberano y compasivo, experto absoluto en la metafísica de Un Curso de Milagros (UCDM). 
+          
+          TU VOZ Y ROL (Intercala según la necesidad del alumno):
+          1. EL MÍSTICO POÉTICO (Suavidad): Cuando el usuario sufre, teme o duda, usa un lenguaje lírico, pausado y celestial. Habla de la paz que sobrepasa todo entendimiento, de la luz que nunca se extinguió y de la naturaleza ilusoria del dolor.
+          2. EL MAESTRO RADICAL (Claridad): Cuando el usuario justifica al ego, busca culpables externos o se aferra al sacrificio, sé directo, firme y cortante con la ilusión, pero SIEMPRE desde el amor. No aceptes compromisos con el miedo. Recuerda que la salvación es solo un cambio de mentalidad.
+          
+          PRINCIPIOS SAGRADOS:
+          - Toda respuesta nace de la premisa: "Nada real puede ser amenazado. Nada irreal existe. En esto radica la paz de Dios".
+          - No das consejos mundanos ni psicológicos; ofreces la Percepción Verdadera y el Milagro.
+          - Usa términos clave de UCDM con elegancia: Expiación, Espíritu Santo, El Hijo de Dios, Sueño de Separación, Perdón Verdadero.
+          - Evita muletillas robóticas. Sé profundo, breve y transformador.`
       });
-
+      
       const result = await model.generateContent({
         contents: [...currentMessages, newMsg].map(m => ({
-          role: m.role,
+          role: m.role === 'user' ? 'user' : 'model',
           parts: [{ text: m.text }]
-        })),
-        generationConfig: {
-          temperature: 0.7,
-        }
+        }))
       });
       
       const response = await result.response;
@@ -116,11 +113,10 @@ export function useGemini(apiKey: string, userId?: string) {
           content: replyText
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Gemini Error Details:", error);
       setMessages((prev: ChatMessage[]) => [...prev, { role: 'model', text: "La conexión con el Guía se ha desvanecido.", timestamp: Date.now() }]);
-    }
- finally {
+    } finally {
       setIsTyping(false);
     }
   };

@@ -130,7 +130,7 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
           <button 
             onClick={() => handleNextWithFade()} 
-            className={`px-5 py-3 rounded-full text-xs font-bold transition-all border ${!currentGema.category ? 'bg-[#D4AF37] text-white border-[#D4AF37]' : 'bg-white/5 text-stone-300 border-white/10 hover:border-white/20'}`}
+            className={`px-5 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border ${!currentGema.category ? 'bg-[#D4AF37] text-white border-[#D4AF37] shadow-lg shadow-[#D4AF37]/20' : 'bg-white/5 text-stone-400 border-white/5 hover:border-[#D4AF37]/30 hover:text-[#D4AF37]'}`}
           >
             Todas
           </button>
@@ -138,7 +138,7 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
             <button 
               key={cat} 
               onClick={() => handleNextWithFade(cat)} 
-              className={`px-5 py-3 rounded-full text-xs font-bold transition-all border ${currentGema.category === cat ? 'bg-[#D4AF37] text-white border-[#D4AF37]' : 'bg-white/5 text-stone-300 border-white/10 hover:border-white/20'}`}
+              className={`px-5 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border ${currentGema.category === cat ? 'bg-[#D4AF37] text-white border-[#D4AF37] shadow-lg shadow-[#D4AF37]/20' : 'bg-white/5 text-stone-400 border-white/5 hover:border-[#D4AF37]/30 hover:text-[#D4AF37]'}`}
             >
               {cat}
             </button>
@@ -157,17 +157,23 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
           <button 
             onClick={toggleFavorite}
             disabled={loading}
-            className={`p-3 rounded-full transition-all ${isFavorite ? 'bg-red-50 text-red-500' : 'bg-stone-50 text-stone-300 hover:text-red-400'}`}
+            className={`p-3 rounded-full transition-all border border-white/5 ${isFavorite ? 'bg-red-500/10 text-red-500' : 'bg-white/5 text-stone-400 hover:text-red-400 hover:bg-white/10'}`}
+            title="Guardar en favoritos"
           >
             <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
           </button>
           <button 
             onClick={handleShare}
-            className="p-3 bg-stone-50 rounded-full text-stone-300 hover:text-stone-900 transition-colors"
+            className="p-3 bg-white/5 rounded-full text-stone-400 hover:text-[#D4AF37] hover:bg-white/10 transition-all border border-white/5"
+            title="Compartir gema"
           >
             <Share2 size={18} />
           </button>
-          <button onClick={() => handleNextWithFade()} className="p-3 bg-stone-50 rounded-full text-stone-400 hover:text-stone-900 transition-colors">
+          <button 
+            onClick={() => handleNextWithFade()} 
+            className="p-3 bg-white/5 rounded-full text-stone-400 hover:text-[#D4AF37] hover:bg-white/10 transition-all border border-white/5"
+            title="Otra gema"
+          >
             <Repeat size={18} />
           </button>
         </div>
@@ -192,20 +198,20 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
             </div>
           )}
           {currentGema.action && (
-            <div className={`p-6 rounded-2xl border transition-all duration-700 ${isTimerRunning ? 'bg-stone-900 border-stone-800 shadow-2xl scale-[1.02]' : showDone ? 'bg-green-50 border-green-100' : 'bg-stone-50 border-stone-100'}`}>
-              <div className="flex items-center justify-between mb-4">
+            <div className={`p-8 rounded-[2.5rem] border transition-all duration-700 ${isTimerRunning ? 'bg-stone-900/40 border-[#D4AF37]/30 shadow-2xl scale-[1.02]' : showDone ? 'bg-green-500/5 border-green-500/20' : 'bg-white/5 border-white/5'}`}>
+              <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <Zap size={16} className={isTimerRunning ? "text-[#D4AF37] animate-pulse" : "text-[#D4AF37]"} />
-                  <span className={`text-xs font-black uppercase tracking-widest ${isTimerRunning ? 'text-[#D4AF37]' : 'text-white'}`}>{isTimerRunning ? 'Practicando...' : 'Microacción'}</span>
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${isTimerRunning ? 'text-[#D4AF37]' : 'text-[#D4AF37]'}`}>{isTimerRunning ? 'Sintonizando...' : 'Microacción'}</span>
                 </div>
-                {showDone && <CheckCircle size={14} className="text-green-500 animate-bounce" />}
+                {showDone && <CheckCircle size={16} className="text-green-500 animate-bounce" />}
                 {!isTimerRunning && !showDone && (
                   <div className="flex gap-1">
                     {[30, 60, 120].map((d) => (
                       <button 
                         key={d}
                         onClick={() => setDuration(d)}
-                        className={`w-8 h-8 rounded-full text-[8px] font-bold flex items-center justify-center transition-all ${duration === d ? 'bg-stone-900 text-[#D4AF37]' : 'bg-stone-200 text-stone-500 hover:bg-stone-300'}`}
+                        className={`w-9 h-9 rounded-full text-[9px] font-black flex items-center justify-center transition-all border ${duration === d ? 'bg-[#D4AF37] text-white border-[#D4AF37] shadow-lg shadow-[#D4AF37]/20' : 'bg-white/5 text-stone-400 border-white/5 hover:bg-white/10'}`}
                       >
                         {d}s
                       </button>
@@ -213,7 +219,7 @@ export function GemaView({ currentGema, onNextGema, userId, categories }: GemaVi
                   </div>
                 )}
               </div>
-              <p className={`text-sm leading-relaxed mb-6 ${isTimerRunning ? 'text-stone-400 italic' : 'text-stone-700 font-medium'}`}>{currentGema.action}</p>
+              <p className={`text-sm leading-relaxed mb-8 ${isTimerRunning ? 'text-stone-200 italic font-serif' : 'text-stone-100 font-medium'}`}>{currentGema.action}</p>
               
               <button 
                 onClick={() => setIsTimerRunning(!isTimerRunning)}
