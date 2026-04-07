@@ -10,6 +10,7 @@ export function FloatingPortal({ activeTab, onSetTab }: FloatingPortalProps) {
   const navItems = [
     { id: 'home', icon: <Home size={20} />, label: 'Inicio' },
     { id: 'gems', icon: <Heart size={20} />, label: 'Gemas' },
+    { id: 'lessons', icon: <BookOpen size={20} />, label: 'Lecciones' },
     { id: 'practice', icon: <Activity size={20} />, label: 'Práctica' },
     { id: 'qa', icon: <MessageCircle size={20} />, label: 'Guía' },
     { id: 'profile', icon: <User size={20} />, label: 'Perfil' },

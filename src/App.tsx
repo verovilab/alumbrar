@@ -18,6 +18,7 @@ import { SavedView } from './components/SavedView';
 import { ProfileView } from './components/ProfileView';
 import { ZenPlayer } from './components/ZenPlayer';
 import { PracticeView } from './components/PracticeView';
+import { ZenPracticeView } from './components/ZenPracticeView';
 import { FloatingPortal } from './components/ui/FloatingPortal';
 
 // Hooks & Data
@@ -41,7 +42,9 @@ export default function App() {
     zen: false,
     lesson: false,
     practice: false,
-    chat: false
+    chat: false,
+    gems: false,
+    journey: false
   });
   
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -51,7 +54,7 @@ export default function App() {
     return 'light';
   });
   
-  const [activeTab, setActiveTab] = useState<'home' | 'gems' | 'qa' | 'lessons' | 'saved' | 'profile' | 'practice'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'gems' | 'qa' | 'lessons' | 'saved' | 'profile' | 'practice' | 'zen-practice'>('home');
   const [input, setInput] = useState('');
 
   // Auth & Subscription Listener
@@ -314,6 +317,13 @@ export default function App() {
             userId={session?.user?.id} 
             dayOfYear={dayOfYear} 
             lessonContent={lessonContent} 
+            setRitualState={setRitualState}
+          />
+        )}
+
+        {activeTab === 'zen-practice' && (
+          <ZenPracticeView 
+            onSetTab={setActiveTab} 
             setRitualState={setRitualState}
           />
         )}

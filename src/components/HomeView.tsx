@@ -15,6 +15,8 @@ interface HomeViewProps {
     lesson: boolean;
     practice: boolean;
     chat: boolean;
+    gems: boolean;
+    journey: boolean;
   };
   setRitualState: React.Dispatch<React.SetStateAction<any>>;
 }
@@ -30,24 +32,30 @@ export function HomeView({
   
   const steps = [
     { id: 'zen', label: 'Silencio', icon: <Wind size={18} />, completed: ritualState.zen },
-    { id: 'lesson', label: 'La Verdad', icon: <BookOpen size={18} />, completed: ritualState.lesson },
+    { id: 'lesson', label: 'Verdad', icon: <BookOpen size={18} />, completed: ritualState.lesson },
     { id: 'practice', label: 'Entrega', icon: <Activity size={18} />, completed: ritualState.practice },
     { id: 'chat', label: 'Guía', icon: <MessageCircle size={18} />, completed: ritualState.chat },
+    { id: 'gems', label: 'Gema', icon: <Sparkles size={18} />, completed: ritualState.gems },
+    { id: 'journey', label: 'Recorrido', icon: <Activity size={18} />, completed: ritualState.journey },
   ];
 
   const handleStepClick = (stepId: string) => {
     if (stepId === 'zen') {
-      window.dispatchEvent(new CustomEvent('toggle-zen-audio', { detail: { action: 'play' } }));
-      setRitualState((prev: any) => ({ ...prev, zen: true }));
+      onSetTab('zen-practice');
     } else if (stepId === 'lesson') {
       onLoadLesson(dayOfYear);
       setRitualState((prev: any) => ({ ...prev, lesson: true }));
     } else if (stepId === 'practice') {
       onSetTab('practice');
-      // La marca de completanza se hará en PracticeView al guardar
     } else if (stepId === 'chat') {
       onSetTab('qa');
       setRitualState((prev: any) => ({ ...prev, chat: true }));
+    } else if (stepId === 'gems') {
+      onSetTab('gems');
+      setRitualState((prev: any) => ({ ...prev, gems: true }));
+    } else if (stepId === 'journey') {
+      onSetTab('profile');
+      setRitualState((prev: any) => ({ ...prev, journey: true }));
     }
   };
 
@@ -84,7 +92,7 @@ export function HomeView({
           <div className="h-[1px] flex-1 bg-white/10"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 px-2">
           {/* Paso 1: Silencio */}
           <StepButton 
             title="Habitar el Silencio"
@@ -119,6 +127,24 @@ export function HomeView({
             icon={<MessageCircle size={24} />}
             completed={ritualState.chat}
             onClick={() => handleStepClick('chat')}
+          />
+
+          {/* Paso 5: Gema */}
+          <StepButton 
+            title="Extraer una Gema"
+            desc="Inspiración del alma"
+            icon={<Sparkles size={24} />}
+            completed={ritualState.gems}
+            onClick={() => handleStepClick('gems')}
+          />
+
+          {/* Paso 6: Recorrido */}
+          <StepButton 
+            title="Ver mi recorrido"
+            desc="Tu evolución sagrada"
+            icon={<Activity size={24} />}
+            completed={ritualState.journey}
+            onClick={() => handleStepClick('journey')}
           />
         </div>
       </section>
