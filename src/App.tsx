@@ -318,6 +318,7 @@ export default function App() {
             dayOfYear={dayOfYear} 
             lessonContent={lessonContent} 
             setRitualState={setRitualState}
+            onSetTab={setActiveTab}
           />
         )}
 

@@ -22,9 +22,10 @@ interface PracticeViewProps {
   dayOfYear: number;
   lessonContent: string | null;
   setRitualState: React.Dispatch<React.SetStateAction<any>>;
+  onSetTab: (tab: any) => void;
 }
 
-export function PracticeView({ userId, dayOfYear, lessonContent, setRitualState }: PracticeViewProps) {
+export function PracticeView({ userId, dayOfYear, lessonContent, setRitualState, onSetTab }: PracticeViewProps) {
   const [view, setView] = useState<'practice' | 'reflection' | 'history'>('practice');
   const [feelings, setFeelings] = useState<Feeling[]>([]);
   const [selectedFeeling, setSelectedFeeling] = useState<Feeling | null>(null);
@@ -125,21 +126,52 @@ export function PracticeView({ userId, dayOfYear, lessonContent, setRitualState 
 
       const genAI = new GoogleGenerativeAI(apiKey);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+      
+      const concepto = lessonParts.concept;
       const prompt = `Actúa como un místico compasivo experto en "Un Curso de Milagros".
+
 CONTEXTO:
 - Lección: ${dayOfYear}
-- Concepto Central: ${lessonParts.concept}
+- Concepto Central: ${concepto}
 - Sentimiento del usuario: ${selectedFeeling.display_name} (${selectedFeeling.category})
 - Input opcional: ${userInput || "No proporcionado"}
-TAREA: Genera reflexión y práctica... (JSON)`;
+
+TAREA:
+Genera una reflexión personalizada de 100-150 palabras que:
+1. Reconozca el sentimiento con empatía profunda (sin juzgar)
+2. Conecte ese sentimiento específico con la enseñanza de esta lección
+3. Ofrezca una perspectiva liberadora desde la filosofía de UCDM
+4. Termine con esperanza clara y dirección práctica
+5. Use terminología auténtica de UCDM: Ego, Espíritu Santo, Milagro, Expiación, Hijo de Dios, Percepción Verdadera
+
+ADEMÁS, genera una PRÁCTICA de 60-120 segundos que:
+- Sea específica para este sentimiento + esta lección
+- Incluya respiración, visualización, afirmación o acción concreta
+
+FORMATO DE SALIDA (IMPORTANTE):
+Responde estrictamente en formato JSON plano:
+{
+  "reflection": "tu reflexión aquí",
+  "practice": "tu práctica aquí"
+}`;
+
       const result = await model.generateContent(prompt);
-      const text = result.response.text();
+      const response = await result.response;
+      const text = response.text();
+      
+      let jsonStr = text;
       const jsonMatch = text.match(/\{[\s\S]*\}/);
-      const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : text);
+      if (jsonMatch) jsonStr = jsonMatch[0];
+      
+      const parsed = JSON.parse(jsonStr);
+      
+      if (!parsed.reflection || !parsed.practice) throw new Error("Formato JSON incompleto");
+      
       setAiResult(parsed);
       setView('reflection');
     } catch (error) {
-      console.error(error);
+      console.error("Guía Error Details:", error);
+      alert("🕊️ El Guía está en silencio por un momento. Por favor, verificá tu conexión o intentá de nuevo en unos segundos.");
     } finally {
       setIsGenerating(false);
     }
@@ -243,7 +275,21 @@ TAREA: Genera reflexión y práctica... (JSON)`;
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4 animate-fade-in !overflow-visible pb-60">
-      <div className="flex justify-between items-center mb-8">
+      {/* Header with Back Button */}
+      <div className="flex items-center gap-4 mb-10">
+        <button 
+          onClick={() => onSetTab('home')}
+          className="p-3 bg-white/5 rounded-full text-stone-400 hover:text-[#D4AF37] transition-all"
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <div>
+          <h2 className="text-2xl font-serif italic text-white leading-none mb-1">Práctica Diaria</h2>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-[#D4AF37]">Conecta. Siente. Libera.</p>
+        </div>
+      </div>
+
+      <div className="flex justify-end items-center mb-8">
         <div>
           <h2 className="text-4xl font-serif font-bold text-white italic">Práctica Diaria</h2>
           <p className="text-xs uppercase tracking-widest font-black text-[#D4AF37] mt-2">Conecta. Siente. Libera.</p>
