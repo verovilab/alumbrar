@@ -33,7 +33,7 @@ export function useLessons(apiKey: string) {
       }
 
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
+      const model = genAI.getGenerativeModel({ model: 'gemini-3-flash' });
       const prompt = `Actúa como un maestro experto y profundo en Un Curso de Milagros. Proporciona un resumen inspirador de la Lección ${num}. Estructúralo con: 1. El concepto central. 2. Una explicación profunda para la vida diaria. 3. Una práctica concreta para hoy. Usa un tono que transmita paz y verdad. Evita introducciones genéricas, ve directo a la esencia.`;
       
       const result = await model.generateContent(prompt);

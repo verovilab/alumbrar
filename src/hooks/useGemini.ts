@@ -77,9 +77,8 @@ export function useGemini(apiKey: string, userId?: string) {
 
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
-      // Usar gemini-1.5-flash-latest que suele ser más estable para despliegues recientes
       const model = genAI.getGenerativeModel({ 
-        model: 'gemini-1.5-flash-latest',
+        model: 'gemini-3-flash',
         systemInstruction: `Eres 'El Guía' de Alumbrar, un mentor espiritual experto en Un Curso de Milagros (UCDM). 
         
         TU VOZ Y ROL (Intercala según la necesidad del alumno):

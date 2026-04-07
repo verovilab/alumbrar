@@ -17,7 +17,7 @@ interface Feeling {
   color_hex: string;
 }
 
-interface PracticeViewProps {
+interface     PracticeViewProps {
   userId?: string;
   dayOfYear: number;
   lessonContent: string | null;
@@ -105,14 +105,13 @@ export function PracticeView({ userId, dayOfYear, lessonContent, setRitualState,
 
   const handleReceiveGuia = async () => {
     if (!selectedFeeling || isGenerating) return;
-    setIsGenerating(true);
-
+    
     if (!apiKey) {
-      alert("🕊️ La llave del Portal (API Key) no está configurada. Si estás en Vercel, agrégala en la configuración con el nombre VITE_GEMINI_API_KEY.");
-      setIsGenerating(false);
+      alert("🕊️ La API Key no está configurada. Por favor checkeá Vercel o tu .env.local");
       return;
     }
 
+    setIsGenerating(true);
     try {
       const { data: preGenerated, error: dbError } = await supabase
         .from('lesson_reflections')
@@ -132,7 +131,7 @@ export function PracticeView({ userId, dayOfYear, lessonContent, setRitualState,
       }
 
       const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: 'gemini-3-flash' });
       
       const concepto = lessonParts.concept;
       const prompt = `Actúa como un místico compasivo experto en "Un Curso de Milagros".
@@ -155,8 +154,8 @@ ADEMÁS, genera una PRÁCTICA de 60-120 segundos que:
 - Sea específica para este sentimiento + esta lección
 - Incluya respiración, visualización, afirmación o acción concreta
 
-FORMATO DE SALIDA (IMPORTANTE):
-Responde estrictamente en formato JSON plano:
+FORMATO DE SALIDA (ESTRICTO JSON):
+Responde solo con el objeto JSON, sin texto previo ni posterior:
 {
   "reflection": "tu reflexión aquí",
   "practice": "tu práctica aquí"
@@ -172,13 +171,15 @@ Responde estrictamente en formato JSON plano:
       
       const parsed = JSON.parse(jsonStr);
       
-      if (!parsed.reflection || !parsed.practice) throw new Error("Formato JSON incompleto");
+      if (!parsed.reflection || !parsed.practice) {
+        throw new Error("Respuesta incompleta del Guía.");
+      }
       
       setAiResult(parsed);
       setView('reflection');
     } catch (error: any) {
-      console.error("Guía Error Details:", error);
-      alert(`🕊️ El Guía está en silencio por un momento. Error: ${error.message || "Problema de conexión o límite de cuota."}`);
+      console.error("Guía Error:", error);
+      alert(`🕊️ El Guía está en silencio: ${error.message || "Error desconocido"}`);
     } finally {
       setIsGenerating(false);
     }
@@ -223,7 +224,7 @@ Responde estrictamente en formato JSON plano:
 
   if (view === 'history') {
     return (
-      <div className="max-w-5xl mx-auto py-8 px-4 animate-fade-in !overflow-visible pb-60">
+      <div className="max-w-4xl mx-auto px-4 py-8 animate-fade-in pb-32">
         <div className="flex items-center gap-4 mb-10">
           <button 
             onClick={() => onSetTab('home')}
@@ -233,19 +234,10 @@ Responde estrictamente en formato JSON plano:
           </button>
           <div>
             <h2 className="text-2xl font-serif italic text-white leading-none mb-1">Práctica Diaria</h2>
-            <p className="text-[10px] uppercase tracking-[0.3em] text-[#D4AF37]">Conecta. Siente. Libera.</p>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-[#D4AF37]">Historial Sagrado</p>
           </div>
         </div>
-
-        <div className="flex justify-between items-center mb-10">
-          <div>
-            <h2 className="text-3xl font-serif font-bold text-white italic">Tu Viaje Emocional</h2>
-            <p className="text-xs font-black uppercase tracking-[0.3em] text-[#D4AF37] mt-1">Marzo 2026</p>
-          </div>
-          <button onClick={() => setView('practice')} className="px-6 py-3 bg-[#D4AF37] text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-[#D4AF37]/20 flex items-center gap-2">
-            <ChevronLeft size={16} /> Nueva Práctica
-          </button>
-        </div>
+        
         <div className="space-y-8">
           <div className="bg-white rounded-[3rem] p-10 shadow-2xl border border-stone-50 overflow-hidden relative">
             <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
@@ -309,17 +301,6 @@ Responde estrictamente en formato JSON plano:
         </div>
       </div>
 
-      <div className="flex justify-end items-center mb-8">
-        <div>
-          <h2 className="text-4xl font-serif font-bold text-white italic">Práctica Diaria</h2>
-          <p className="text-xs uppercase tracking-widest font-black text-[#D4AF37] mt-2">Conecta. Siente. Libera.</p>
-        </div>
-        <button onClick={() => setView('history')} className="p-4 bg-white/5 border border-white/10 rounded-2xl text-stone-300 hover:text-white transition-all shadow-sm hover:shadow-md flex items-center gap-3 group">
-          <History size={20} className="group-hover:rotate-12 transition-transform" />
-          <span className="text-xs font-black uppercase tracking-widest hidden md:block">Historial Sagrado</span>
-        </button>
-      </div>
-
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start !overflow-visible">
         <div className="lg:sticky lg:top-20">
           <div className="bg-black/40 backdrop-blur-3xl rounded-[3rem] p-12 text-[#FFF9F0] border border-white/10 shadow-2xl relative overflow-hidden group">
@@ -328,7 +309,7 @@ Responde estrictamente en formato JSON plano:
               <span className="text-xs font-black uppercase tracking-[0.4em] text-[#D4AF37] block">Lección {dayOfYear}</span>
               <h3 className="text-3xl md:text-4xl font-serif font-bold italic leading-tight text-white drop-shadow-xl">{lessonParts.concept}</h3>
               <div className="h-[2px] w-20 bg-[#D4AF37]/40"></div>
-              <p className="text-stone-300 text-sm italic font-medium leading-relaxed">Este concepto es tu brújula sagrada.</p>
+              <p className="text-stone-300 text-sm italic font-medium leading-relaxed">Este concepto es tu brújula sagrada. Dejá que resuene en tu silencio antes de expresar tu sentir.</p>
             </div>
           </div>
         </div>
