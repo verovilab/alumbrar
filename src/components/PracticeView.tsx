@@ -4,7 +4,6 @@ import {
   MessageSquare, History, ChevronDown, Calendar, Activity, Zap
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SacredCard } from './ui/SacredCard';
 import { EmotionalHeatMap } from './EmotionalHeatMap';
 
@@ -35,7 +34,6 @@ export function PracticeView({ userId, dayOfYear, lessonContent, setRitualState,
   const [aiResult, setAiResult] = useState<{ reflection: string; practice: string } | null>(null);
   const [showFeelingsDropdown, setShowFeelingsDropdown] = useState(false);
 
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
 
   useEffect(() => {
     fetchFeelings();
@@ -106,13 +104,6 @@ export function PracticeView({ userId, dayOfYear, lessonContent, setRitualState,
   const handleReceiveGuia = async () => {
     if (!selectedFeeling || isGenerating) return;
     
-    if (!apiKey) {
-      alert("🕊️ La llave del Portal (API Key) no está configurada. Si estás en Vercel, agrégala en la configuración con el nombre VITE_GEMINI_API_KEY.");
-      setIsGenerating(false);
-      return;
-    }
-
-    setIsGenerating(true);
     try {
       // Intentar cargar de caché primero
       const { data: preGenerated, error: dbError } = await supabase
@@ -132,10 +123,7 @@ export function PracticeView({ userId, dayOfYear, lessonContent, setRitualState,
         return;
       }
 
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ 
-        model: 'gemini-2.5-flash',
-        systemInstruction: `Eres 'El Guía' de Alumbrar, un místico soberano experto en Un Curso de Milagros (UCDM).
+      const systemInstruction = `Eres 'El Guía' de Alumbrar, un místico soberano experto en Un Curso de Milagros (UCDM).
         
         TU MISIÓN:
         Transformar la percepción del alumno desde el miedo (ego) hacia el amor (espíritu) usando la lección del día como puente.
@@ -143,8 +131,7 @@ export function PracticeView({ userId, dayOfYear, lessonContent, setRitualState,
         TONO Y ESTILO:
         - Sagrado pero Moderno.
         - Unifica la dulzura del místico con la autoridad radical del maestro de UCDM.
-        - Usa un lenguaje que evoque paz, luz y liberación.`
-      });
+        - Usa un lenguaje que evoque paz, luz y liberación.`;
       
       const prompt = `CONTEXTO SAGRADO:
 - Lección del día: ${dayOfYear}
@@ -160,9 +147,18 @@ Genera una respuesta en formato JSON con dos campos:
 FORMATO DE SALIDA (JSON ESTRICTO):
 {"reflection": "texto", "practice": "texto"}`;
 
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
+      const { data, error } = await supabase.functions.invoke('gemini', {
+        body: {
+          action: 'practice',
+          prompt: prompt,
+          systemInstruction: systemInstruction
+        }
+      });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      const text = data?.text || "";
       
       let jsonStr = text;
       const jsonMatch = text.match(/\{[\s\S]*\}/);

@@ -3,7 +3,7 @@ import {
   Home, BookOpen, MessageCircle, RefreshCw, LogOut, Heart, User, Activity, Moon, Sun, Sparkles, ArrowRight
 } from 'lucide-react';
 import { GemaIcon } from './components/GemaIcon';
-import { GoogleGenerativeAI } from "@google/generative-ai";
+
 import { supabase } from './lib/supabase';
 
 // Components
@@ -89,9 +89,8 @@ export default function App() {
   };
 
   // Gemini & Lessons Hooks
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY || "";
-  const { messages, setMessages, isTyping, sendMessage } = useGemini(apiKey, session?.user?.id);
-  const { selectedLesson, setSelectedLesson, lessonContent, isLoadingLesson, loadLesson } = useLessons(apiKey);
+  const { messages, setMessages, isTyping, sendMessage } = useGemini(session?.user?.id);
+  const { selectedLesson, setSelectedLesson, lessonContent, isLoadingLesson, loadLesson } = useLessons();
 
   const dayOfYear = useMemo(() => {
     const now = new Date();

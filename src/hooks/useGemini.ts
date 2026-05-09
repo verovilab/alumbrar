@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { supabase } from '../lib/supabase';
-
 import { ChatMessage } from '../types';
 
-export function useGemini(apiKey: string, userId?: string) {
+export function useGemini(userId?: string) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -76,10 +74,7 @@ export function useGemini(apiKey: string, userId?: string) {
     });
 
     try {
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ 
-        model: 'gemini-2.5-flash',
-        systemInstruction: `Eres 'El Guía' de Alumbrar, un mentor espiritual soberano y compasivo, experto absoluto en la metafísica de Un Curso de Milagros (UCDM). 
+      const systemInstruction = `Eres 'El Guía' de Alumbrar, un mentor espiritual soberano y compasivo, experto absoluto en la metafísica de Un Curso de Milagros (UCDM). 
           
           TU VOZ Y ROL (Intercala según la necesidad del alumno):
           1. EL MÍSTICO POÉTICO (Suavidad): Cuando el usuario sufre, teme o duda, usa un lenguaje lírico, pausado y celestial. Habla de la paz que sobrepasa todo entendimiento, de la luz que nunca se extinguió y de la naturaleza ilusoria del dolor.
@@ -89,18 +84,26 @@ export function useGemini(apiKey: string, userId?: string) {
           - Toda respuesta nace de la premisa: "Nada real puede ser amenazado. Nada irreal existe. En esto radica la paz de Dios".
           - No das consejos mundanos ni psicológicos; ofreces la Percepción Verdadera y el Milagro.
           - Usa términos clave de UCDM con elegancia: Expiación, Espíritu Santo, El Hijo de Dios, Sueño de Separación, Perdón Verdadero.
-          - Evita muletillas robóticas. Sé profundo, breve y transformador.`
+          - Evita muletillas robóticas. Sé profundo, breve y transformador.`;
+
+      const formattedMessages = [...currentMessages, newMsg].map(m => ({
+        role: m.role === 'user' ? 'user' : 'model',
+        parts: [{ text: m.text }]
+      }));
+
+      // Llamar a nuestra Edge Function en lugar de ir a Gemini directamente
+      const { data, error } = await supabase.functions.invoke('gemini', {
+        body: {
+          action: 'chat',
+          messages: formattedMessages,
+          systemInstruction: systemInstruction
+        }
       });
-      
-      const result = await model.generateContent({
-        contents: [...currentMessages, newMsg].map(m => ({
-          role: m.role === 'user' ? 'user' : 'model',
-          parts: [{ text: m.text }]
-        }))
-      });
-      
-      const response = await result.response;
-      const replyText = response.text();
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      const replyText = data?.text;
       
       if (replyText) {
         const aiMsg: ChatMessage = { role: 'model', text: replyText, timestamp: Date.now() };
@@ -114,7 +117,7 @@ export function useGemini(apiKey: string, userId?: string) {
         });
       }
     } catch (error: any) {
-      console.error("Gemini Error Details:", error);
+      console.error("Guía Edge Function Error Details:", error);
       setMessages((prev: ChatMessage[]) => [...prev, { role: 'model', text: "La conexión con el Guía se ha desvanecido.", timestamp: Date.now() }]);
     } finally {
       setIsTyping(false);

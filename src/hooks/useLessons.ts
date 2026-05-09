@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Lesson } from '../types';
 
-export function useLessons(apiKey: string) {
+export function useLessons() {
   const [selectedLesson, setSelectedLesson] = useState<number | null>(null);
   const [lessonContent, setLessonContent] = useState<string | null>(null);
   const [isLoadingLesson, setIsLoadingLesson] = useState(false);
@@ -27,23 +26,24 @@ export function useLessons(apiKey: string) {
         return;
       }
 
-      // 2. Generar con IA si no hay o es muy corto
-      if (!apiKey) {
-        throw new Error("Clave de API de Gemini no configurada.");
-      }
-
-      const genAI = new GoogleGenerativeAI(apiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-      
+      // 2. Generar con IA a través de la Edge Function si no hay o es muy corto
       const prompt = `Actúa como un maestro experto y profundo en Un Curso de Milagros. Proporciona un resumen inspirador de la Lección ${num}. Estructúralo con: 
       1. El concepto central. 
       2. Una explicación profunda para la vida diaria. 
       3. Una práctica concreta para hoy. 
       Usa un tono que transmita paz y verdad. Evita introducciones genéricas, ve directo a la esencia.`;
 
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const fullContent = response.text() || "La Verdad espera tu reconocimiento silencioso.";
+      const { data, error } = await supabase.functions.invoke('gemini', {
+        body: {
+          action: 'lesson',
+          prompt: prompt
+        }
+      });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      const fullContent = data?.text || "La Verdad espera tu reconocimiento silencioso.";
       
       setLessonContent(fullContent);
 
